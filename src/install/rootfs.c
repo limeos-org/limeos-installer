@@ -3,6 +3,7 @@
 int extract_rootfs(void)
 {
     Store *store = get_store();
+    char cmd[1024];
 
     // In non-dry-run mode, ensure the rootfs archive exists.
     if (!store->dry_run)
@@ -19,8 +20,16 @@ int extract_rootfs(void)
         return -2;
     }
 
-    // Set up necessary mounts for chroot environment.
-    if (run_command("sh src/install/mounts.sh 2>/dev/null") != 0)
+    // Mount the root filesystem.
+    snprintf(cmd, sizeof(cmd), "mount %s /mnt 2>/dev/null", store->disk);
+    if (run_command(cmd) != 0)
+    {
+        return 1;
+    }
+
+    // Mount the boot partition.
+    snprintf(cmd, sizeof(cmd), "mount %s /mnt/boot 2>/dev/null", store->disk);
+    if (run_command(cmd) != 0)
     {
         return -3;
     }
