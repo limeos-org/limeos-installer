@@ -6,7 +6,7 @@ int create_partitions(const char *disk, Store *store)
 
     // Create GPT partition table.
     snprintf(cmd, sizeof(cmd), "parted -s %s mklabel gpt 2>/dev/null", disk);
-    if (run_command(cmd) != 0)
+    if (system(cmd) != 0)
     {
         return 1;
     }
@@ -27,7 +27,7 @@ int create_partitions(const char *disk, Store *store)
             (p->type == PART_PRIMARY) ? "primary" : "logical",
             start_mb, end_mb
         );
-        if (run_command(cmd) != 0)
+        if (system(cmd) != 0)
         {
             return 1;
         }
@@ -40,7 +40,7 @@ int create_partitions(const char *disk, Store *store)
                 "parted -s %s set %d boot on 2>/dev/null",
                 disk, i + 1
             );
-            run_command(cmd);
+            system(cmd);
         }
 
         // Set ESP flag if needed.
@@ -51,7 +51,7 @@ int create_partitions(const char *disk, Store *store)
                 "parted -s %s set %d esp on 2>/dev/null",
                 disk, i + 1
             );
-            run_command(cmd);
+            system(cmd);
         }
 
         start_mb = end_mb;
@@ -73,7 +73,7 @@ int create_partitions(const char *disk, Store *store)
             snprintf(cmd, sizeof(cmd), "mkswap %s 2>/dev/null", partition_device);
         }
 
-        if (run_command(cmd) != 0)
+        if (system(cmd) != 0)
         {
             return 1;
         }
@@ -88,7 +88,7 @@ int create_partitions(const char *disk, Store *store)
             char partition_device[128];
             get_partition_device(disk, i + 1, partition_device, sizeof(partition_device));
             snprintf(cmd, sizeof(cmd), "mount %s /mnt 2>/dev/null", partition_device);
-            if (run_command(cmd) != 0)
+            if (system(cmd) != 0)
             {
                 return 1;
             }
@@ -105,7 +105,7 @@ int create_partitions(const char *disk, Store *store)
             char partition_device[128];
             get_partition_device(disk, i + 1, partition_device, sizeof(partition_device));
             snprintf(cmd, sizeof(cmd), "swapon %s 2>/dev/null", partition_device);
-            run_command(cmd);
+            system(cmd);
         }
         else if (strcmp(p->mount_point, "/") != 0 && p->mount_point[0] == '/')
         {
@@ -118,7 +118,7 @@ int create_partitions(const char *disk, Store *store)
                 "mkdir -p %s && mount %s %s 2>/dev/null",
                 mount_path, partition_device, mount_path
             );
-            run_command(cmd);
+            system(cmd);
         }
     }
 

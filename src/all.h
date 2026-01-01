@@ -14,7 +14,6 @@
 
 #include "store/store.h"
 #include "utils/disk.h"
-#include "utils/command.h"
 #include "ui/ui.h"
 #include "ui/modal.h"
 #include "ui/interfaces.h"
