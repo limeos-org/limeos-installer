@@ -76,7 +76,8 @@ void get_partition_device(
     const char *disk, int part_num, char *out_buffer, size_t buffer_size
 )
 {
-    // NVMe and MMC devices use 'p' separator (e.g., /dev/nvme0n1p1, /dev/mmcblk0p1).
+    // NVMe and MMC devices use 'p' separator
+    // (e.g., `/dev/nvme0n1p1`, `/dev/mmcblk0p1`).
     if (strstr(disk, "nvme") || strstr(disk, "mmcblk"))
     {
         snprintf(out_buffer, buffer_size, "%sp%d", disk, part_num);
