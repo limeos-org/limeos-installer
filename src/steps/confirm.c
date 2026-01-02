@@ -53,8 +53,50 @@ int run_confirmation_step(WINDOW *modal)
         }
     }
 
-    // Render the appropriate message based on root partition presence.
-    if (has_root)
+    // Check for duplicate mount points.
+    int has_duplicate = 0;
+    for (int i = 0; i < store->partition_count && !has_duplicate; i++)
+    {
+        for (int j = i + 1; j < store->partition_count; j++)
+        {
+            if (strcmp(store->partitions[i].mount_point,
+                       store->partitions[j].mount_point) == 0)
+            {
+                has_duplicate = 1;
+                break;
+            }
+        }
+    }
+
+    // Determine if installation can proceed.
+    int can_install = has_root && !has_duplicate;
+
+    // Render the appropriate message based on validation.
+    if (has_duplicate)
+    {
+        // Display error about duplicate mount points.
+        render_error(modal, 10, 3,
+            "Multiple partitions share the same mount point.\n"
+            "Go back and fix the configuration."
+        );
+
+        // Display navigation footer without install option.
+        const char *footer[] = {"[Esc] Back", NULL};
+        render_footer(modal, footer);
+    }
+    else if (!has_root)
+    {
+        // Display error about missing root partition.
+        render_error(modal, 10, 3,
+            "A root (/) partition is required.\n"
+            "Go back and add one to continue."
+        );
+
+        // Display navigation footer without install option.
+        const char *footer[] = {"[Esc] Back", NULL};
+        render_footer(modal, footer);
+    }
+    else
     {
         // Display warning about disk formatting.
         char warning_text[128];
@@ -69,27 +111,15 @@ int run_confirmation_step(WINDOW *modal)
         const char *footer[] = {"[Enter] Install", "[Esc] Back", NULL};
         render_footer(modal, footer);
     }
-    else
-    {
-        // Display error about missing root partition.
-        render_error(modal, 10, 3,
-            "A root (/) partition is required.\n"
-            "Go back and add one to continue."
-        );
-
-        // Display navigation footer without install option.
-        const char *footer[] = {"[Esc] Back", NULL};
-        render_footer(modal, footer);
-    }
 
     wrefresh(modal);
 
     // Wait for user confirmation or back.
     int key;
-    while ((key = wgetch(modal)) != 27 && (key != '\n' || !has_root))
+    while ((key = wgetch(modal)) != 27 && (key != '\n' || !can_install))
     {
         // Ignore other input.
     }
 
-    return key == '\n' && has_root;
+    return key == '\n' && can_install;
 }
