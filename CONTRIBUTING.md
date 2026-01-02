@@ -22,6 +22,7 @@ This document outlines the guidelines for contributing to this repository, inclu
 
 - [Understanding the Git workflow](#understanding-the-git-workflow)
 - [Determining version numbers](#determining-version-numbers)
+- [Writing commit messages](#writing-commit-messages)
 
 **C Language Contributing Guidelines**
 
@@ -169,6 +170,32 @@ This repository adheres to Semantic Versioning (SemVer), which uses a three-part
 - `2.0.0` - Introduced breaking changes.
 
 A more in-depth guide on SemVer can be found [here](https://semver.org/).
+
+### Writing commit messages
+
+This subsection defines conventions for writing clear and consistent commit messages. Well-written commit messages make project history easier to navigate and simplify debugging with tools like `git bisect`.
+
+To write a commit message, think: "This commit will ..." and complete the sentence. The completion becomes your subject line.
+
+**Example**
+
+- "This commit will ..." → `Add disk selection step to wizard`
+- "This commit will ..." → `Fix memory leak in partition parser`
+- "This commit will ..." → `Remove deprecated locale functions`
+
+**Rules**
+
+1. The subject line **must** complete the sentence "This commit will ...".
+
+   _**Why?**_ This naturally produces imperative mood, matching Git's auto-generated messages and describing what applying the commit does.
+
+2. The subject line **must not** exceed 72 characters.
+
+   _**Why?**_ Short subjects remain fully visible in `git log --oneline` and GitHub's commit list without truncation.
+
+3. The body, if included, **should** be separated from the subject by a blank line and wrap at 72 characters.
+
+   _**Why?**_ Git tooling treats the first line as the subject; a blank line ensures proper parsing, and wrapped lines display correctly without horizontal scrolling.
 
 &nbsp;
 
