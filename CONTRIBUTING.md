@@ -354,9 +354,9 @@ int connect_to_server(const char *host);
 
    _**Why?**_ File-level context helps readers understand the module's role before diving into implementation.
 
-9. File header comments **must** start on the very first line, above any includes.
+9. File header comments **must** appear above any includes.
 
-   _**Why?**_ Placing the header first ensures readers see the module's purpose immediately, before any implementation details.
+   _**Why?**_ Placing the header before includes ensures readers see the module's purpose before implementation details.
 
 ### Naming code elements and files
 
