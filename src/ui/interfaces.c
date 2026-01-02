@@ -7,6 +7,13 @@
 
 #include "../all.h"
 
+static int is_field_valid(const FormField *field)
+{
+    return field->options != NULL &&
+           field->current >= 0 &&
+           field->current < field->option_count;
+}
+
 void render_scrollbar(
     WINDOW *window, int y, int x, int height, int offset, int visible, int total
 )
@@ -297,56 +304,57 @@ void render_form(
             row_y += FORM_DESCRIPTION_SHIFT;
         }
 
+        FormField *field = &fields[field_index];
         int is_focused = (field_index == focused);
 
         // Render label.
-        mvwprintw(window, row_y, x, "%-*s", label_width, fields[field_index].label);
+        mvwprintw(window, row_y, x, "%-*s", label_width, field->label);
 
         // Apply field styling: reverse for focused, dimmed for readonly.
         int value_x = x + label_width + 1;
-        if (is_focused && !fields[field_index].readonly)
+        if (is_focused && !field->readonly)
         {
             wattron(window, A_REVERSE);
         }
-        if (fields[field_index].readonly)
+        if (field->readonly)
         {
             wattron(window, COLOR_PAIR(CUSTOM_COLOR_PAIR_DIM));
         }
 
         // Render value with arrows for navigable fields.
-        if (fields[field_index].options != NULL && fields[field_index].current >= 0 &&
-            fields[field_index].current < fields[field_index].option_count)
+        if (is_field_valid(field))
         {
-            if (!fields[field_index].readonly)
+            const char *value = field->options[field->current];
+            if (!field->readonly)
             {
-                mvwprintw(window, row_y, value_x, "< %s >", fields[field_index].options[fields[field_index].current]);
+                mvwprintw(window, row_y, value_x, "< %s >", value);
             }
             else
             {
-                mvwprintw(window, row_y, value_x, "  %s", fields[field_index].options[fields[field_index].current]);
+                mvwprintw(window, row_y, value_x, "  %s", value);
             }
         }
 
         // Disable field styling after rendering.
-        if (fields[field_index].readonly)
+        if (field->readonly)
         {
             wattroff(window, COLOR_PAIR(CUSTOM_COLOR_PAIR_DIM));
         }
-        if (is_focused && !fields[field_index].readonly)
+        if (is_focused && !field->readonly)
         {
             wattroff(window, A_REVERSE);
         }
 
         // Render description below focused field (with gap above).
-        if (is_focused && fields[focused].description != NULL)
+        if (is_focused && field->description != NULL)
         {
-            if (fields[focused].warning)
+            if (field->warning)
             {
-                render_warning(window, row_y + 2, x, fields[focused].description);
+                render_warning(window, row_y + 2, x, field->description);
             }
             else
             {
-                render_info(window, row_y + 2, x, fields[focused].description);
+                render_info(window, row_y + 2, x, field->description);
             }
         }
     }
