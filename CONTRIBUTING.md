@@ -575,6 +575,8 @@ src/
 
 ## Document Contributing Guidelines
 
+> **Important:** These guidelines are replicated across all LimeOS repositories. Any changes made here must also be applied to the `CONTRIBUTING.md` files across all other repositories to maintain consistency.
+
 ### Storing document assets
 
 This subsection defines where to store assets used in documentation files like images, or other media.
