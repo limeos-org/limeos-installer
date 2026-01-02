@@ -50,11 +50,44 @@ This document outlines the guidelines for contributing to this repository, inclu
 
 ### Building the installation wizard
 
-**TBA**
+This subsection explains how to build the installation wizard from source.
+
+First, install the required dependencies. For Debian-based Linux distributions, run:
+
+```bash
+sudo apt install \
+    clang \
+    make \
+    libncurses-dev
+```
+
+If you're not using a Debian-based Linux distribution, the package names may differ. In that case, you must consult the package repositories for your specific distribution to identify the appropriate names.
+
+Then, from the root directory of the repository, build the project by running:
+
+```bash
+make
+```
+
+Finally, verify the build succeeded by checking that the executable exists at `./bin/limeos-installation-wizard`.
 
 ### Running the installation wizard
 
-**TBA**
+This subsection explains how to run the installation wizard after building it.
+
+First, ensure the required commands are available on your system: `parted`, `mkfs.ext4`, `mkswap`, `mount`, `swapon`, and `tar`. These are typically pre-installed on most Linux distributions.
+
+Then, run the wizard in dry-run mode to test it without making any changes to your system:
+
+```bash
+./bin/limeos-installation-wizard --dry
+```
+
+Finally, follow the on-screen prompts to navigate through the installation steps. For actual installation use, run with root privileges since the wizard performs disk partitioning and system installation operations:
+
+```bash
+sudo ./bin/limeos-installation-wizard
+```
 
 &nbsp;
 
