@@ -21,6 +21,9 @@ WINDOW *create_modal(const char *title)
     // Enable arrow key detection on this window.
     keypad(window, TRUE);
 
+    // Explicitly set blocking input mode to prevent busy-loop on some terminals.
+    wtimeout(window, -1);
+
     // Draw full-width title bar with lighter background.
     wattron(window, COLOR_PAIR(CUSTOM_COLOR_PAIR_ROW_ODD));
     mvwprintw(window, 0, 0, "%*s", MODAL_WIDTH, "");
