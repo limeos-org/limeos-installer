@@ -1,5 +1,33 @@
 #include "../all.h"
 
+/**
+ * Validates a device name contains only safe characters.
+ * Prevents path traversal by rejecting names with dots, slashes, etc.
+ *
+ * @param device The device name to validate.
+ *
+ * @return 1 if valid, 0 if invalid.
+ */
+static int is_valid_device_name(const char *device)
+{
+    // Ensure device name is not empty.
+    if (device == NULL || device[0] == '\0')
+    {
+        return 0;
+    }
+
+    // Allow only alphanumeric characters and underscores.
+    for (const char *c = device; *c != '\0'; c++)
+    {
+        if (!isalnum((unsigned char)*c) && *c != '_')
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 void format_disk_size(unsigned long long bytes, char *out_buffer, size_t buffer_size)
 {
     double size = (double)bytes;
@@ -24,6 +52,12 @@ unsigned long long get_disk_size(const char *disk_path)
         device++;
     }
 
+    // Validate device name to prevent path traversal.
+    if (!is_valid_device_name(device))
+    {
+        return 0;
+    }
+
     // Prepare path to size file in `/sys/block`.
     char path[256];
     snprintf(path, sizeof(path), "/sys/block/%s/size", device);
@@ -45,6 +79,12 @@ unsigned long long get_disk_size(const char *disk_path)
 
 int is_disk_removable(const char *device)
 {
+    // Validate device name to prevent path traversal.
+    if (!is_valid_device_name(device))
+    {
+        return 0;
+    }
+
     // Prepare path to removable status file in `/sys/block`.
     char path[256];
     snprintf(path, sizeof(path), "/sys/block/%s/removable", device);

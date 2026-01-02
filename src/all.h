@@ -11,6 +11,7 @@
 #include <ncurses.h>
 #include <sys/wait.h>
 #include <dirent.h>
+#include <ctype.h>
 
 #include "store/store.h"
 #include "utils/disk.h"
