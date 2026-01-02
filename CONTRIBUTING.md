@@ -153,7 +153,7 @@ A more in-depth guide on SemVer can be found [here](https://semver.org/).
 
 ## C Language Contributing Guidelines
 
-> **Important:** These guidelines are replicated across all LimeOS repositories that primarily use the C programming language. Any changes made here must also be applied to the `CONTRIBUTING.md` files across similar repositories to maintain consistency.
+> **Important:** These guidelines are replicated across all LimeOS repositories that use the C programming language. Any changes made here must also be applied to the `CONTRIBUTING.md` files across similar repositories to maintain consistency.
 
 ### Writing documentation
 
