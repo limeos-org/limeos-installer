@@ -431,7 +431,14 @@ void render_form(
         // Render description below focused field (with gap above).
         if (is_focused && fields[focused].description != NULL)
         {
-            render_info(window, row_y + 2, x, fields[focused].description);
+            if (fields[focused].warning)
+            {
+                render_warning(window, row_y + 2, x, fields[focused].description);
+            }
+            else
+            {
+                render_info(window, row_y + 2, x, fields[focused].description);
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 #include "../../all.h"
 
-#define SIZE_COUNT 20
+#define SIZE_COUNT 19
 #define MOUNT_COUNT 5
 #define FLAG_COUNT 3
 #define TYPE_COUNT 2
@@ -29,16 +29,15 @@ static const unsigned long long size_presets[] =
     1000ULL * 1000000000,    // 1T
     2000ULL * 1000000000,    // 2T
     4000ULL * 1000000000,    // 4T
-    5000ULL * 1000000000,    // 5T
+    6000ULL * 1000000000,    // 6T
     8000ULL * 1000000000,    // 8T
-    0                        // "Rest"
 };
 
 static const char *size_labels[] =
 {
     "64MB", "128MB", "256MB", "512MB", "1GB", "2GB", "4GB", "8GB",
     "16GB", "32GB", "64GB", "128GB", "256GB", "512GB",
-    "1TB", "2TB", "4TB", "5TB", "8TB", "Rest"
+    "1TB", "2TB", "4TB", "6TB", "8TB"
 };
 
 static const char *mount_options[] = { "/", "/boot", "/home", "/var", "swap" };
@@ -68,7 +67,7 @@ static int find_closest_size_idx(unsigned long long size)
         }
     }
 
-    // Default to "Rest" if no closer match found.
+    // Default to largest size if no closer match found.
     return SIZE_COUNT - 1;
 }
 
@@ -103,6 +102,7 @@ static int find_flag_idx(int boot, int esp)
 
 static int run_partition_form(
     WINDOW *modal, const char *title, const char *free_str,
+    unsigned long long free_space,
     int *size_idx, int *mount_idx, int *type_idx, int *flag_idx,
     const char *footer_action
 )
@@ -112,20 +112,29 @@ static int run_partition_form(
     // Main form loop.
     while (1)
     {
+        // Check if selected size exceeds available space.
+        unsigned long long selected_size = size_presets[*size_idx];
+        int exceeds = (selected_size > free_space);
+
         // Set up form fields.
+        const char *size_desc = exceeds
+            ? "Selected size exceeds available space.\n"
+              "It will be clamped to the remaining free space."
+            : "The size you want this partition to be.\n"
+              "Sizes exceeding free space will be clamped.";
+
         FormField fields[FIELD_COUNT] = {
             { "Size",       size_labels,   SIZE_COUNT,  *size_idx,  0,
-              "The size you want this partition to be.\n"
-              "Use 'Rest' to allocate all remaining disk space." },
+              size_desc, exceeds },
             { "Mount",      mount_options, MOUNT_COUNT, *mount_idx, 0,
               "Where this partition will be accessible.\n"
-              "Filesystem (ext4, swap) is automatically chosen." },
+              "Filesystem (ext4, swap) is automatically chosen.", 0 },
             { "Type",       type_options,  TYPE_COUNT,  *type_idx,  0,
               "Partition type. Primary is standard for most uses.\n"
-              "Use logical partitions inside extended partitions." },
+              "Use logical partitions inside extended partitions.", 0 },
             { "Flags",      flag_options,  FLAG_COUNT,  *flag_idx,  0,
               "Special flags for bootloader configuration.\n"
-              "'esp' for UEFI boot, 'boot' for legacy BIOS." }
+              "'esp' for UEFI boot, 'boot' for legacy BIOS.", 0 }
         };
 
         // Clear modal and render dialog title.
@@ -257,7 +266,7 @@ int add_partition_dialog(
 
     // Run the partition form.
     if (!run_partition_form(
-        modal, "Add Partition", free_str, &size_idx,
+        modal, "Add Partition", free_str, free_space, &size_idx,
         &mount_idx, &type_idx, &flag_idx, "Add"
     ))
     {
@@ -266,17 +275,8 @@ int add_partition_dialog(
 
     Partition new_partition = {0};
 
-    // Set partition size, using remaining space for "Rest".
-    if (size_presets[size_idx] == 0)
-    {
-        new_partition.size_bytes = free_space;
-    }
-    else
-    {
-        new_partition.size_bytes = size_presets[size_idx];
-    }
-
-    // Clamp size to available free space.
+    // Set partition size, clamping to available free space.
+    new_partition.size_bytes = size_presets[size_idx];
     if (new_partition.size_bytes > free_space)
     {
         new_partition.size_bytes = free_space;
@@ -348,23 +348,15 @@ int edit_partition_dialog(
 
     // Run the partition form.
     if (!run_partition_form(
-        modal, title, free_str, &size_idx, &mount_idx, &type_idx, &flag_idx, "Save"
+        modal, title, free_str, free_space,
+        &size_idx, &mount_idx, &type_idx, &flag_idx, "Save"
     ))
     {
         return 0;
     }
 
-    // Update partition size from form value.
-    if (size_presets[size_idx] == 0)
-    {
-        p->size_bytes = free_space;
-    }
-    else
-    {
-        p->size_bytes = size_presets[size_idx];
-    }
-
-    // Clamp size to available free space.
+    // Update partition size, clamping to available free space.
+    p->size_bytes = size_presets[size_idx];
     if (p->size_bytes > free_space)
     {
         p->size_bytes = free_space;

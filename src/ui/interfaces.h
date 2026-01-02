@@ -37,6 +37,7 @@ typedef struct {
     int current;
     int readonly;
     const char *description;
+    int warning;
 } FormField;
 
 /**
