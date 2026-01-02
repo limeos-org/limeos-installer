@@ -20,8 +20,8 @@ This document outlines the guidelines for contributing to this repository, inclu
 **C Language Contributing Guidelines**
 
 - [Writing documentation](#writing-documentation)  
-  &nbsp; • &nbsp; [Writing documentation in header files](#writing-documentation-in-header-files)  
-  &nbsp; • &nbsp; [Writing documentation in source files](#writing-documentation-in-source-files)
+  &nbsp; • &nbsp; [Writing directive comments](#writing-directive-comments)  
+  &nbsp; • &nbsp; [Writing indicative comments](#writing-indicative-comments)
 - [Naming code elements and files](#naming-code-elements-and-files)  
   &nbsp; • &nbsp; [Naming functions](#naming-functions)  
   &nbsp; • &nbsp; [Naming variables](#naming-variables)  
@@ -60,7 +60,7 @@ This document outlines the guidelines for contributing to this repository, inclu
 
 This subsection establishes guidelines for documenting code through comments and Doxygen annotations. Clear documentation reduces onboarding time for new contributors, prevents bugs, and ensures the long-term sustainability of the project.
 
-**Rules**
+General rules for commenting:
 
 1. Comment lines **must not** exceed 80 characters in length, including whitespace.
 
@@ -70,84 +70,11 @@ This subsection establishes guidelines for documenting code through comments and
 
    _**Why?**_ Inconsistent punctuation looks sloppy and undermines the professionalism of the codebase.
 
-#### Writing documentation in header files
+Additionally, these guidelines enforce the usage of **directive** and **indicative** commenting, which you can read more about below.
 
-This subsection defines how to document declarations within header (.h) files using Doxygen format, which allows for automatic documentation generation and standardized presentation.
+#### Writing directive comments
 
-**Template**
-
-```c
-/**
- * [DESCRIPTION].
- *
- * @param [NAME] [PURPOSE].
- *
- * @return [VALUE].
- */
-```
-
-Where:
-
-- `DESCRIPTION` - A brief explanation of what the element represents or does.
-- `NAME` - The parameter name.
-- `PURPOSE` - What the parameter is used for.
-- `VALUE` - What the function returns.
-
-**Example**
-
-```c
-/**
- * Represents a point in a 2D coordinate system.
- */
-typedef struct {
-   int x;
-   int y;
-} Vector2;
-
-/**
- * Computes the linear distance between two Vector2 points
- * in 2D space.
- *
- * @param p1 The first point.
- * @param p2 The second point.
- *
- * @return The calculated distance as a floating-point number.
- */
-float calculate_distance(int p1, int p2);
-
-/**
- * Attempts to connect to the server.
- *
- * @param host The server hostname.
- *
- * @return - `0` Indicates successful connection.
- * @return - `-1` Indicates a connection failure.
- * @return - `-2` Indicates an invalid hostname.
- */
-int connect_to_server(const char *host);
-```
-
-**Rules**
-
-1. Every declaration within a header file **must** be documented using the Doxygen `/** */` format.
-
-   _**Why?**_ Doxygen comments enable automatic documentation generation and provide standardized presentation across tooling.
-
-2. Each section (description, parameters, returns) **must** be separated by a single blank line.
-
-   _**Why?**_ Visual grouping makes the comment structure skimmable at a glance.
-
-3. Functions with discrete return values **should** use the dash notation (`-`) within `@return` to list each possible value.
-
-   _**Why?**_ Listing return codes explicitly prevents callers from having to trace implementation to understand failure modes.
-
-4. Tags **must** be limited to `@param`, `@return`, `@note`, and `@warning`.
-
-   _**Why?**_ These tags are widely supported across tools and editors; exotic tags may not render correctly.
-
-#### Writing documentation in source files
-
-This subsection defines how to document implementation details within source (.c) files using inline comments that explain logic and algorithmic steps.
+Directive comments are inline annotations written in a _directive_ tone that describe each logical step within function implementations. They transform code into a readable narrative by pairing language with code, allowing reviewers and maintainers to understand the algorithm without parsing every line.
 
 **Template**
 
@@ -163,53 +90,186 @@ Where:
 **Example**
 
 ```c
-int update_item_value(Item* item, int new_value)
+int update_item_value(Item *item, int new_value)
 {
-   // Ensure the item pointer is not NULL.
-   if (item == NULL) {
-      return ERROR_NULL_POINTER;
-   }
+    // Ensure the item pointer is not NULL.
+    if (item == NULL) {
+        return ERROR_NULL_POINTER;
+    }
 
-   // Validate the new value against allowed range.
-   if (new_value < MIN_VALUE || new_value > MAX_VALUE) {
-      return ERROR_VALUE_OUT_OF_RANGE;
-   }
+    // Validate the new value against allowed range.
+    if (new_value < MIN_VALUE || new_value > MAX_VALUE) {
+        return ERROR_VALUE_OUT_OF_RANGE;
+    }
 
-   // Assign the new value to the item.
-   item->value = new_value;
+    // Assign the new value to the item.
+    item->value = new_value;
 
-   return SUCCESS;
+    return SUCCESS;
 }
 ```
 
 **Rules**
 
-1. Each logical step within a function **must** have an inline comment above it.
+1. Each logical step **must** have a directive comment above it; the first or last step **may** be omitted if self-evident (e.g., a simple return statement).
 
-   _**Why?**_ Inline comments let readers skim logic without parsing implementation. Remove the code, and the comments alone should convey the algorithm.
+   _**Why?**_ Directive comments let readers skim logic without parsing implementation. Remove the code, and the comments alone should convey the algorithm.
 
-2. Inline comments **must** use `//`, not `/* */` or `/** */`.
+2. Steps **must** be separated by a blank line; code within a step **must not** contain blank lines.
 
-   _**Why?**_ Single-line comments signal inline guidance, not API documentation.
+   _**Why?**_ Blank lines separate steps into skimmable chunks; blank lines inside a step break the grouping.
 
-3. Inline comments **must** start with a verb (e.g., "Validate...", "Calculate...", "Ensure...").
+3. Comments **must** start with a verb (e.g., "Validate...", "Calculate...", "Ensure...").
 
    _**Why?**_ Verbs describe actions; nouns describe state. Code is action.
 
-4. Complex source files **should** include a multi-line file header comment beginning with "This code is responsible for".
+4. Comments **must** use `//`, not `/* */` or `/** */`.
 
-   _**Why?**_ File-level context helps readers understand the module's role before diving into implementation details.
+   _**Why?**_ Single-line comments signal inline guidance, not API documentation.
+
+5. Comments **should** describe the action, but **may** explain _how_ when the implementation is non-obvious.
+
+   _**Why?**_ Usually the code shows how; `// Increment i` above `i++` is noise, not signal.
+
+#### Writing indicative comments
+
+Indicative comments document code element declarations (functions, types, macros, global variables) written in an _indicative_ tone by stating their identity and purpose. These comments appear at point-of-declaration in header files and provide intent that signatures alone cannot express.
+
+**Templates**
+
+1\. Identity template, for things that _are_ (types, macros, global variables):
+
+```c
+/**
+ * A/The [THING] [RELATIONSHIP] [ROLE/PURPOSE].
+ */
+```
+
+Where:
+
+- `A/The` - `"A"` for instances (types), `"The"` for singletons (macros, global variables).
+- `THING` - What it literally is (`"type"`, `"maximum retry count"`, `"configuration struct"`).
+- `RELATIONSHIP` - How it relates to its role (`"representing"`, `"for"`, `"defining"`).
+- `ROLE/PURPOSE` - What it's for.
+
+2\. Action template, for things that _do_ (functions):
+
+```c
+/**
+ * [VERB:ACTION].
+ */
+```
+
+Where:
+
+- `VERB` - Indicates the sentence must start with a verb (e.g., "Validates", "Calculates", "Fetches").
+- `ACTION` - What it does, including its primary output or effect.
+
+3\. Expanded template, which extends either the identity or action templates:
+
+```c
+/**
+ * [IDENTITY or ACTION].
+ *
+ * [PURPOSE].
+ *
+ * @param [NAME] [DESCRIPTION].
+ *
+ * @return [VALUE].
+ *
+ * @note [ADDITIONAL CONTEXT].
+ */
+```
+
+Where:
+
+- `IDENTITY or ACTION` - The first line, following either template above.
+- `PURPOSE` - Additional context explaining why, if not obvious from the first line.
+- `NAME` - The parameter name.
+- `DESCRIPTION` - What the parameter is used for.
+- `VALUE` - What the function returns.
+- `ADDITIONAL CONTEXT` - Optional. Any caveats or assumptions that don't fit elsewhere.
+
+**Example**
+
+```c
+/** The maximum number of connection retry attempts. */
+#define MAX_RETRIES 3
+
+/** A type representing a point in 2D space. */
+typedef struct {
+    int x;
+    int y;
+} Vector2;
+
+/** Calculates the linear distance between two points. */
+float calculate_distance(Vector2 p1, Vector2 p2);
+
+/**
+ * Attempts to establish a connection to the specified server.
+ *
+ * Retries up to MAX_RETRIES times before failing.
+ *
+ * @param host The server hostname.
+ *
+ * @return - `0` Indicates successful connection.
+ * @return - `-1` Indicates a connection failure.
+ * @return - `-2` Indicates an invalid hostname.
+ *
+ * @note The caller is responsible for closing the connection.
+ */
+int connect_to_server(const char *host);
+```
+
+**Rules**
+
+1. All declarations in header files **must** have an indicative comment stating what it is and what role it plays.
+
+   _**Why?**_ Names don't always capture intent. Requiring comments removes ambiguity about what should be documented, reducing decision fatigue.
+
+2. The comment **should** explain why, unless the role is self-evident; trivial declarations **may** use a single-line form.
+
+   _**Why?**_ The "purpose" captures intent code cannot express, but forcing it on trivial cases creates noise.
+
+3. The comment **must not** explain how; reserve that for directive comments in the implementation.
+
+   _**Why?**_ Indicative comments are for consumers. Implementation details belong where the logic lives.
+
+4. All parameters **must** have a `@param` tag describing their purpose.
+
+   _**Why?**_ Types show shape; `@param` explains intent (e.g., whether a `user_id` is the actor or the target).
+
+5. Each group of tags (e.g., `@param`, `@return`) **must** be separated by a blank line.
+
+   _**Why?**_ Visual grouping makes the comment structure skimmable at a glance.
+
+6. Tags **must** be limited to `@param`, `@return`, `@note`, and `@warning`.
+
+   _**Why?**_ These tags are widely supported across tools and editors; exotic tags may not render correctly.
+
+7. Comments **must** use `/**` and end with `*/` (Doxygen format).
+
+   _**Why?**_ Doxygen comments enable automatic documentation generation and appear at point-of-use in editors.
+
+8. Complex source files **should** include a file header comment beginning with "This code is responsible for".
+
+   _**Why?**_ File-level context helps readers understand the module's role before diving into implementation.
+
+9. File header comments **must** start on the very first line, above any includes.
+
+   _**Why?**_ Placing the header first ensures readers see the module's purpose immediately, before any implementation details.
 
 **Example** (file header)
 
 ```c
-#include <stdio.h>
-
 /**
  * This code is responsible for user authentication and session management.
- * Note that session timestamps use local time instead of UTC, causing
- * potential Daylight Saving Time issues.
+ *
+ * @note Session timestamps use local time instead of UTC, causing
+ *       potential Daylight Saving Time issues.
  */
+
+#include <stdio.h>
 ```
 
 ### Naming code elements and files
@@ -408,7 +468,7 @@ This repository uses two main branches:
 
 **Rules**
 
-1. Contributors **must** fork the repository and create a branch from `develop` prefixed with `feature-`.
+1. Contributors **must** fork the repository and create a branch from `develop` prefixed with `feature/`.
 
    _**Why?**_ Feature branches isolate work-in-progress and make code review manageable.
 
@@ -424,9 +484,9 @@ This repository uses two main branches:
 
 ```bash
 git checkout develop
-git checkout -b feature-audio-support
+git checkout -b feature/audio-support
 # Make changes and commit
-git push origin feature-audio-support
+git push origin feature/audio-support
 # Submit pull request targeting develop
 ```
 
