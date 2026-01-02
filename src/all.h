@@ -1,12 +1,13 @@
 #pragma once
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
 #include <string.h>
+#include <errno.h> 
 #include <signal.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <ncurses.h>
 #include <sys/wait.h>
