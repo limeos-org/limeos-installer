@@ -12,22 +12,40 @@ This document outlines the guidelines for contributing to this repository, inclu
 
 ### Table of Contents
 
-#### Repository Contributing Guidelines
+**Repository Contributing Guidelines**
 
 - [Building the installation wizard](#building-the-installation-wizard)
 - [Running the installation wizard](#running-the-installation-wizard)
+- [Testing the installation wizard](#testing-the-installation-wizard)
 
-#### C Language Contributing Guidelines
+**General Contributing Guidelines**
 
-- [Writing documentation](#writing-documentation)
-- [Naming files and code elements](#naming-files-and-code-elements)
+- [Understanding the Git workflow](#understanding-the-git-workflow)
+- [Determining version numbers](#determining-version-numbers)
+- [Writing commit messages](#writing-commit-messages)
+
+**C Language Contributing Guidelines**
+
+- [Writing documentation](#writing-documentation)  
+  &nbsp; • &nbsp; [Writing directive comments](#writing-directive-comments)  
+  &nbsp; • &nbsp; [Writing indicative comments](#writing-indicative-comments)
+- [Naming code elements and files](#naming-code-elements-and-files)  
+  &nbsp; • &nbsp; [Naming functions](#naming-functions)  
+  &nbsp; • &nbsp; [Naming variables](#naming-variables)  
+  &nbsp; • &nbsp; [Naming parameters](#naming-parameters)  
+  &nbsp; • &nbsp; [Naming types](#naming-types)  
+  &nbsp; • &nbsp; [Naming macros](#naming-macros)  
+  &nbsp; • &nbsp; [Naming files](#naming-files)  
+  &nbsp; • &nbsp; [Naming binaries](#naming-binaries)
 - [Ordering code declarations](#ordering-code-declarations)
 - [Structuring files](#structuring-files)
+- [Formatting code](#formatting-code)
 
-#### General Contributing Guidelines
+**Document Contributing Guidelines**
 
-- [Understanding the Git Workflow](#understanding-the-git-workflow)
-- [Determining version numbers](#determining-version-numbers)
+- [Storing document assets](#storing-document-assets)
+- [Modifying CONTRIBUTING.md](#modifying-contributingmd)
+- [Modifying README.md](#modifying-readmemd)
 
 &nbsp;
 
@@ -35,199 +53,524 @@ This document outlines the guidelines for contributing to this repository, inclu
 
 ### Building the installation wizard
 
-**TBA**
+This subsection explains how to build the installation wizard from source.
+
+First, install the required dependencies. For Debian-based Linux distributions, run:
+
+```bash
+sudo apt install \
+    gcc \
+    make \
+    libncurses-dev
+```
+
+If you're not using a Debian-based Linux distribution, the package names may differ. In that case, you must consult the package repositories for your specific distribution to identify the appropriate names.
+
+Then, from the root directory of the repository, build the project by running:
+
+```bash
+make
+```
+
+Finally, verify the build succeeded by checking that the executable exists at `./bin/limeos-installation-wizard`.
 
 ### Running the installation wizard
 
-**TBA**
+This subsection explains how to run the installation wizard after building it.
+
+First, ensure the required commands are available on your system: `parted`, `mkfs.ext4`, `mkswap`, `mount`, `swapon`, and `tar`. These are typically pre-installed on most Linux distributions.
+
+Then, run the wizard in dry-run mode to test it without making any changes to your system:
+
+```bash
+./bin/limeos-installation-wizard --dry
+```
+
+Finally, follow the on-screen prompts to navigate through the installation steps. For actual installation use, run with root privileges since the wizard performs disk partitioning and system installation operations:
+
+```bash
+sudo ./bin/limeos-installation-wizard
+```
+
+### Testing the installation wizard
+
+This subsection explains how to run the unit test suite. The tests do not write to disk or modify system state, and are thus safe to run on any machine.
+
+First, ensure the cmocka testing library is installed. For Debian-based Linux distributions, run:
+
+```bash
+sudo apt install libcmocka-dev
+```
+
+If you're not using a Debian-based Linux distribution, the package names may differ. In that case, you must consult the package repositories for your specific distribution to identify the appropriate names.
+
+Then, run the test suite:
+
+```bash
+make test
+```
+
+Finally, verify that all tests pass. If any tests fail, review the output to identify the failing test and investigate the cause before submitting changes.
+
+&nbsp;
+
+## General Contributing Guidelines
+
+> **Important:** This section is replicated across all LimeOS repositories. Any changes made here must also be applied to the `CONTRIBUTING.md` files across all other repositories to maintain consistency.
+
+### Understanding the Git workflow
+
+This subsection documents the branching strategy and contribution process. Following this workflow ensures smooth collaboration and maintains code quality across releases.
+
+This repository uses two main branches:
+
+- `main` - Stable release code, must not be pushed to directly.
+- `develop` - Development code, must not be pushed to directly.
+
+**Rules**
+
+1. Contributors **must** fork the repository and create a branch from `develop` prefixed with `feature/`.
+
+   _**Why?**_ Feature branches isolate work-in-progress and make code review manageable.
+
+2. Contributors **must not** push directly to `main` or `develop`.
+
+   _**Why?**_ Protected branches ensure all changes go through review, maintaining code quality.
+
+3. Pull requests **must** target the `develop` branch.
+
+   _**Why?**_ Targeting develop allows integration testing before changes reach the stable main branch.
+
+**Example**
+
+```bash
+git checkout develop
+git checkout -b feature/audio-support
+# Make changes and commit
+git push origin feature/audio-support
+# Submit pull request targeting develop
+```
+
+Changes will be reviewed by project maintainers. Approved changes are merged or squashed into `develop`. When sufficient changes accumulate, maintainers merge `develop` into `main` and create a new release tag on `main` following SemVer conventions.
+
+### Determining version numbers
+
+This subsection defines the versioning scheme used for releases. Semantic Versioning provides clear expectations about compatibility between versions.
+
+This repository adheres to Semantic Versioning (SemVer), which uses a three-part version number:
+
+- `MAJOR` - Incremented for incompatible API changes.
+- `MINOR` - Incremented for backwards-compatible new features.
+- `PATCH` - Incremented for backwards-compatible bug fixes.
+
+**Example**
+
+- `1.0.0` - Initial stable release.
+- `1.1.0` - Added new features.
+- `1.1.1` - Added bug fixes.
+- `2.0.0` - Introduced breaking changes.
+
+A more in-depth guide on SemVer can be found [here](https://semver.org/).
+
+### Writing commit messages
+
+This subsection defines conventions for writing clear and consistent commit messages. Well-written commit messages make project history easier to navigate and simplify debugging with tools like `git bisect`.
+
+To write a commit message, think: "This commit will ..." and complete the sentence. Drop the filler words and use the completion as your subject line.
+
+**Example**
+
+- "This commit will ..." → `Add disk selection step to wizard`
+- "This commit will ..." → `Fix memory leak in partition parser`
+- "This commit will ..." → `Remove deprecated locale functions`
+
+**Rules**
+
+1. The subject line **must** complete the sentence "This commit will ...".
+
+   _**Why?**_ This naturally produces imperative mood, matching Git's auto-generated messages and describing what applying the commit does.
+
+2. The subject line **must not** exceed 72 characters.
+
+   _**Why?**_ Short subjects remain fully visible in `git log --oneline` and GitHub's commit list without truncation.
+
+3. The subject line **must not** end with a period.
+
+   _**Why?**_ The subject is a title, not a sentence; omitting the period is the standard convention.
+
+4. The body, if included, **should** be separated from the subject by a blank line and wrap at 72 characters.
+
+   _**Why?**_ Git tooling treats the first line as the subject; a blank line ensures proper parsing, and wrapped lines display correctly without horizontal scrolling.
 
 &nbsp;
 
 ## C Language Contributing Guidelines
 
-**Important:** These guidelines are replicated across all LimeOS repositories that primarely use the C programming language. Any changes made here, must also be applied to the `CONTRIBUTING.md` files across similar repositories to maintain consistency.
+> **Important:** This section is replicated across all LimeOS repositories that use the C programming language. Any changes made here must also be applied to the `CONTRIBUTING.md` files across similar repositories to maintain consistency.
 
 ### Writing documentation
 
-Clear, comprehensive documentation is a cornerstone principle across all LimeOS codebases. It reduces onboarding time for new contributors, prevents bugs, and ensures the long-term sustainability of the project.
+This subsection establishes guidelines for documenting code through comments and Doxygen annotations. Clear documentation reduces onboarding time for new contributors, prevents bugs, and ensures the long-term sustainability of the project.
 
-When writing documentation, ensure that comment lines do not exceed 80 characters in length, including whitespace. This improves readability across different viewing environments. All comments should be written with proper punctuation and grammar, where sentences end with a period.
+**Rules**
 
-The following guidelines outline how to properly document code for both header (.h) and source (.c) files.
+1. Comment lines **must not** exceed 80 characters in length, including whitespace.
 
-<details>
-   <summary>&ensp;<b>Writing documentation within header (.h) files.</b></summary>
+   _**Why?**_ Research suggests ~50-75 characters is easiest to read. 80 is a practical cap that works well in terminals and side-by-side diffs.
 
-&nbsp;  
- Every declaration within the header file must be documented using the Doxygen format, which allows for automatic documentation generation and standardized presentation.
+2. Comments using sentence grammar **must** follow natural language conventions (e.g., end with a full stop).
 
-Below are some examples demonstrating the Doxygen format:
+   _**Why?**_ Inconsistent punctuation looks sloppy and undermines the professionalism of the codebase.
+
+Additionally, these guidelines enforce the usage of **directive** and **indicative** commenting, which you can read more about below.
+
+#### Writing directive comments
+
+Directive comments are inline annotations written in a _directive_ tone that describe each logical step within function implementations. They transform code into a readable narrative by pairing language with code, allowing reviewers and maintainers to understand the algorithm without parsing every line.
+
+**Template**
 
 ```c
-/**
- * Represents a point in a 2D coordinate system.
- */
-typedef struct {
-   int x;
-   int y;
-} Vector2;
-
-/**
-* Computes the linear distance between two Vector2 points
-* in 2D space.
-*
-* @param p1 The first point.
-* @param p2 The second point.
-*
-* @return The calculated distance as a floating-point number.
-*/
-float calculate_distance(int p1, int p2);
+// [VERB:ACTION].
 ```
 
-Note how the documentation block uses the Doxygen-compatible `/** */` style rather than regular comments and how each section (description, parameters, returns) is separated by a single blank line.
+Where:
 
-For functions with a limited number of discrete return values (e.g., error codes), use the dash notation (`-`) within the `@return` tag to list each possible value and its meaning:
+- `VERB` - Indicates the sentence must start with a verb (e.g., "Ensure", "Validate", "Calculate").
+- `ACTION` - What the step accomplishes.
 
-```c
-/**
-* @return - `0` Indicates successful execution.
-* @return - `-1` Indicates a general failure.
-* @return - `-2` Indicates a specific error condition (e.g., invalid input).
-*/
-```
-
-Please stick to the `@param`, `@return`, `@note`, and `@warning` tags exclusively, as these tags are guaranteed to be widely supported.
-
-</details>
-
-<details>
-   <summary>&ensp;<b>Writing documentation within source (.c) files.</b></summary>
-
-&nbsp;  
- Documentation within source files must purely focus on documenting the implementation details with inline comments that explain the logic and algorithmic steps within functions:
+**Example**
 
 ```c
-int update_item_value(Item* item, int new_value)
+int update_item_value(Item *item, int new_value)
 {
-   // Ensure the item pointer is not NULL.
-   if (item == NULL) {
-      return ERROR_NULL_POINTER;
-   }
+    // Ensure the item pointer is not NULL.
+    if (item == NULL)
+    {
+        return ERROR_NULL_POINTER;
+    }
 
-   // Validate the new value against allowed range.
-   if (new_value < MIN_VALUE || new_value > MAX_VALUE) {
-      return ERROR_VALUE_OUT_OF_RANGE;
-   }
+    // Validate the new value against allowed range.
+    if (new_value < MIN_VALUE || new_value > MAX_VALUE)
+    {
+        return ERROR_VALUE_OUT_OF_RANGE;
+    }
 
-   // Assign the new value to the item.
-   item->value = new_value;
+    // Assign the new value to the item.
+    item->value = new_value;
 
-   return SUCCESS;
+    return SUCCESS;
 }
 ```
 
-For complex source files, consider adding a multi-line comment at the top of the file, directly after the includes, that begins with "This code is responsible for" to provide critical context:
+**Rules**
+
+1. Each logical step **must** have a directive comment above it; the first or last step **may** be omitted if self-evident (e.g., a simple return statement).
+
+   _**Why?**_ Directive comments let readers skim logic without parsing implementation. Remove the code, and the comments alone should convey the algorithm.
+
+2. Steps **must** be separated by a blank line; code within a step **must not** contain blank lines.
+
+   _**Why?**_ Blank lines separate steps into skimmable chunks; blank lines inside a step break the grouping.
+
+3. Comments **must** start with a verb (e.g., "Validate...", "Calculate...", "Ensure...").
+
+   _**Why?**_ Verbs describe actions; nouns describe state. Code is action.
+
+4. Comments **must** use `//`, not `/* */` or `/** */`.
+
+   _**Why?**_ Single-line comments signal inline guidance, not API documentation.
+
+5. Comments **should** describe the action, but **may** explain _how_ when the implementation is non-obvious.
+
+   _**Why?**_ Usually the code shows how; `// Increment i` above `i++` is noise, not signal.
+
+#### Writing indicative comments
+
+Indicative comments document code element declarations (functions, types, macros, global variables) written in an _indicative_ tone by stating their identity and purpose. These comments appear at point-of-declaration in header files and provide intent that signatures alone cannot express.
+
+**Templates**
+
+1\. Identity template, for things that _are_ (types, macros, global variables):
 
 ```c
-#include <stdout.h>
-
 /**
-* This code is responsible for user authentication and session management.
-* Note that sessions timestamps use local time instead of UTC, causing
-* potential Daylight Saving Time issues.
-*/
+ * A/The [THING] [RELATIONSHIP] [ROLE/PURPOSE].
+ */
 ```
 
-</details>
+Where:
 
-### Naming files and code elements
+- `A/The` - `"A"` for instances (types), `"The"` for singletons (macros, global variables).
+- `THING` - What it literally is (`"type"`, `"maximum retry count"`, `"configuration struct"`).
+- `RELATIONSHIP` - How it relates to its role (`"representing"`, `"for"`, `"defining"`).
+- `ROLE/PURPOSE` - What it's for.
 
-Consistent naming conventions are crucial for maintaining code readability. Adhering to these standards ensures that code elements and files are easily identifiable and understandable.
+2\. Action template, for things that _do_ (functions):
 
-Unlike many modern programming languages, C lacks an official style guide or standard convention. Instead, different projects and organizations have developed their own sets of conventions over time. In our codebase, we've adopted naming practices that align closely with traditional C programming patterns found in established projects like the Linux kernel and GNU software.
+```c
+/**
+ * [VERB:ACTION].
+ */
+```
 
-Below are the specific file and code element naming conventions to follow within this project:
+Where:
 
-#### Function Names
+- `VERB` - Indicates the sentence must start with a verb (e.g., "Validates", "Calculates", "Fetches").
+- `ACTION` - What it does, including its primary output or effect.
 
-- Follow `snake_case()` convention.
-- Typically follow a verb-noun structure (e.g., `write_to_buffer()`).
-- Incorporate the name of the module they're in (e.g., `read_config()` in `config` module).
+3\. Expanded template, which extends either the identity or action templates:
 
-#### Variable Names
+```c
+/**
+ * [IDENTITY or ACTION].
+ *
+ * [PURPOSE].
+ *
+ * @param [NAME] [DESCRIPTION].
+ *
+ * @return [VALUE].
+ *
+ * @note [ADDITIONAL CONTEXT].
+ */
+```
 
-- Follow `snake_case` convention.
-- Clearly indicate the variable's contents or purpose.
-- Avoid abbreviations, except for standard ones (e.g., `id` for identifier).
+Where:
 
-#### Parameter Names
+- `IDENTITY or ACTION` - The first line, following either template above.
+- `PURPOSE` - Additional context explaining why, if not obvious from the first line.
+- `NAME` - The parameter name.
+- `DESCRIPTION` - What the parameter is used for.
+- `VALUE` - What the function returns.
+- `ADDITIONAL CONTEXT` - Optional. Any caveats or assumptions that don't fit elsewhere.
 
-- Follow `snake_case` convention.
-- Clearly indicate the parameter's contents or purpose.
-- Avoid abbreviations, except for standard ones (e.g., `id` for identifier).
-- Are prefixed with `out_` if its values are to be modified by the function.
+**Example**
 
-#### Type Names
+```c
+/** The maximum number of connection retry attempts. */
+#define MAX_RETRIES 3
 
-- Follow `PascalCase` convention.
-- Use descriptive nouns or noun phrases that represent the data structure (e.g., `UserData`).
-- Incorporate the name of the module they're in (e.g., `ImageProperties` in `image` module).
+/** A type representing a point in 2D space. */
+typedef struct
+{
+    int x;
+    int y;
+} Vector2;
 
-#### Macro Names
+/** Calculates the linear distance between two points. */
+float calculate_distance(Vector2 p1, Vector2 p2);
 
-- Follow `SNAKE_CASE` convention (all uppercase).
-- Clearly indicate the macro's contents or purpose.
-- Add unit suffixes where applicable for clarity (e.g., `_MS`, `_PERCENT`, `_BYTES`).
-- Incorporate the name of the module they're in (e.g., `NETWORK_RETRY_COUNT` in `network` module).
+/**
+ * Attempts to establish a connection to the specified server.
+ *
+ * Retries up to MAX_RETRIES times before failing.
+ *
+ * @param host The server hostname.
+ *
+ * @return - `0` Indicates successful connection.
+ * @return - `-1` Indicates a connection failure.
+ * @return - `-2` Indicates an invalid hostname.
+ *
+ * @note The caller is responsible for closing the connection.
+ */
+int connect_to_server(const char *host);
+```
 
-#### File Names
+**Rules**
 
-- Follow `snake_case` convention.
-- Use concise names, typically 1-2 words.
-- Avoid abbreviations unless widely understood (e.g., `auth`).
-- Let directory structure provide context (e.g., `user/auth/tokens.c`).
+1. All declarations in header files **must** have an indicative comment stating what it is and what role it plays.
 
-#### Binary Names
+   _**Why?**_ Names don't always capture intent. Requiring comments removes ambiguity about what should be documented, reducing decision fatigue.
 
-- Follow `dash-case` convention.
-- Always start with the `limeos-` prefix (e.g., `limeos-window-manager`).
-- Avoid abbreviations entirely (Excluding the suffix below).
-- Append `-lib` suffix for libraries (e.g., `limeos-config-lib`).
+2. The comment **should** explain why, unless the role is self-evident; trivial declarations **may** use a single-line form.
+
+   _**Why?**_ The "purpose" captures intent code cannot express, but forcing it on trivial cases creates noise.
+
+3. The comment **must not** explain how; reserve that for directive comments in the implementation.
+
+   _**Why?**_ Indicative comments are for consumers. Implementation details belong where the logic lives.
+
+4. Doxygen tags **must** follow these conventions: use only `@param`, `@return`, `@note`, and `@warning`; include `@param` for all parameters; separate tag groups with blank lines.
+
+   _**Why?**_ Limiting tags ensures broad tooling support; requiring `@param` captures intent that types cannot express; blank lines make the structure skimmable.
+
+5. Declaration comments **must** use `/**` and end with `*/` (Doxygen format).
+
+   _**Why?**_ Doxygen comments enable automatic documentation generation and appear at point-of-use in editors.
+
+6. Complex source files **should** begin with a file header comment placed above any includes. The file header comment **must** use `/** ... */` but **must not** include any Doxygen tags and **should** begin with "This code is responsible for".
+
+   _**Why?**_ File-level context helps readers understand the module's purpose immediately, before any implementation details.
+
+### Naming code elements and files
+
+This subsection defines naming conventions for functions, variables, types, macros, and files. Unlike many modern programming languages, C lacks an official style guide. In this codebase, we follow naming practices that align closely with traditional C programming patterns found in established projects like the Linux kernel and GNU software.
+
+#### Naming functions
+
+This subsection defines naming conventions for functions.
+
+1. Function names **must** follow `snake_case()` convention.
+
+   _**Why?**_ Snake case is the traditional C convention, keeping naming consistent with standard library functions and established C projects.
+
+2. Function names **should** follow a verb-noun structure (e.g., `write_to_buffer()`).
+
+   _**Why?**_ Verb-noun makes intent explicit at the call site, reducing cognitive load when scanning code.
+
+3. Function names **should** incorporate the name of their module (e.g., `read_config()` in `config` module).
+
+   _**Why?**_ Module prefixes prevent name collisions and make the function's origin clear without checking includes.
+
+#### Naming variables
+
+This subsection defines naming conventions for variables.
+
+1. Variable names **must** follow `snake_case` convention.
+
+   _**Why?**_ Consistent casing with functions keeps the codebase visually uniform and predictable.
+
+2. Variable names **must** clearly indicate the variable's contents or purpose.
+
+   _**Why?**_ Ambiguous names force readers to trace assignments, breaking their reading flow and forcing unnecessary context-switching.
+
+3. Variable names **must not** use abbreviations, except for standard ones (e.g., `id` for identifier).
+
+   _**Why?**_ Abbreviations create project-specific vocabulary that readers must memorize and reduce discoverability in search.
+
+#### Naming parameters
+
+This subsection defines naming conventions for function parameters.
+
+1. Parameter names **must** follow `snake_case` convention.
+
+   _**Why?**_ Consistent casing with variables keeps function signatures visually uniform.
+
+2. Parameter names **must** clearly indicate the parameter's contents or purpose.
+
+   _**Why?**_ Vague parameter names force readers to jump to the function definition to understand what to pass.
+
+3. Parameter names **must not** use abbreviations, except for standard ones (e.g., `id` for identifier).
+
+   _**Why?**_ Parameters are read most often at the call site. Avoiding abbreviations keeps intent obvious.
+
+4. Output parameters **must** be prefixed with `out_`.
+
+   _**Why?**_ The prefix signals that the function modifies the parameter, preventing accidental misuse.
+
+#### Naming types
+
+This subsection defines naming conventions for types (structs, enums, typedefs).
+
+1. Type names **must** follow `PascalCase` convention.
+
+   _**Why?**_ PascalCase distinguishes types from variables and functions at a glance.
+
+2. Type names **should** use descriptive nouns or noun phrases (e.g., `UserData`).
+
+   _**Why?**_ Descriptive names reduce cognitive load by making a type's contents clear at a glance.
+
+3. Type names **should** incorporate the name of their module (e.g., `ImageProperties` in `image` module).
+
+   _**Why?**_ Module prefixes prevent name collisions across the codebase.
+
+#### Naming macros
+
+This subsection defines naming conventions for preprocessor macros.
+
+1. Macro names **must** follow `SCREAMING_SNAKE_CASE` convention (all uppercase).
+
+   _**Why?**_ Uppercase signals "compile-time constant" or "macro" at a glance, distinguishing them from runtime values.
+
+2. Macro names **must** clearly indicate the macro's contents or purpose.
+
+   _**Why?**_ Magic values without context force readers to guess intent.
+
+3. Macro names **should** add unit suffixes where applicable (e.g., `_MS`, `_PERCENT`, `_BYTES`).
+
+   _**Why?**_ Unit suffixes prevent unit mismatch bugs and make the value's meaning explicit.
+
+4. Macro names **should** incorporate the name of their module (e.g., `NETWORK_RETRY_COUNT` in `network` module).
+
+   _**Why?**_ Module prefixes prevent name collisions and group related constants visually.
+
+#### Naming files
+
+This subsection defines naming conventions for source and header files.
+
+1. File names **must** follow `snake_case` convention.
+
+   _**Why?**_ Snake case matches the function naming convention and avoids case-sensitivity issues across file systems.
+
+2. File names **should** use concise names, typically 1-2 words.
+
+   _**Why?**_ Short names scan faster in directory trees and include statements.
+
+3. File names **must not** use abbreviations unless widely understood (e.g., `auth`).
+
+   _**Why?**_ Abbreviations make files harder to find via search and increase inconsistent naming.
+
+4. File names **should** let directory structure provide context (e.g., `user/auth/tokens.c`).
+
+   _**Why?**_ Long filenames with multiple concepts signal that directory structure should carry that meaning instead.
+
+#### Naming binaries
+
+This subsection defines naming conventions for compiled binaries and libraries.
+
+1. Binary names **must** follow `dash-case` convention.
+
+   _**Why?**_ Dash case is the standard convention for Unix executables and command-line tools.
+
+2. Binary names **must** start with the `limeos-` prefix (e.g., `limeos-window-manager`).
+
+   _**Why?**_ The prefix identifies the binary as part of the LimeOS project and prevents name collisions with system tools.
+
+3. Binary names **must not** use abbreviations.
+
+   _**Why?**_ Users type binary names directly; full names are more discoverable and memorable.
+
+4. Library binaries **must** append the `-lib` suffix (e.g., `limeos-config-lib`).
+
+   _**Why?**_ The suffix distinguishes libraries from executables at a glance.
 
 ### Ordering code declarations
 
-Maintaining a consistent order of declarations within source and header files helps contributors quickly locate specific elements within a file, reducing the cognitive load associated with navigating unfamiliar code.
+This subsection defines the order in which code elements should appear within source and header files. Consistent ordering helps contributors quickly locate specific elements, reducing cognitive load when navigating unfamiliar code.
 
-Code elements should be organized in the following order:
+**Rules**
 
-1. **Includes**
-2. **Macros**
-3. **Types**
-4. **Global variables**
-5. **Functions**
+1. Code elements **must** be organized in the following order: **Includes**, **Macros**, **Types**, **Global variables**, **Functions**.
+
+   _**Why?**_ This order ensures dependencies are defined before use: includes bring in external dependencies, macros are available for type definitions, types are available for variable declarations, and functions come last after all their dependencies are established.
 
 ### Structuring files
 
-A well-organized repository structure enables contributors to quickly locate and understand code components. The following structural guidelines must be followed:
+This subsection defines how to organize files and directories within the repository. A well-organized structure enables contributors to quickly locate and understand code components.
 
-#### Minimal Root Directory
+**Rules**
 
-Limit the root directory to essential files only:
+1. The root directory **must** contain only essential files: build configurations (`Makefile`), documentation (`README.md`, `CONTRIBUTING.md`), important directories (`src`, `bin`, `obj`), and license information.
 
-- Build configurations (`Makefile`)
-- Documentation (`README.md`, `CONTRIBUTING.md`)
-- Important directories (`src`, `bin`, `obj`)
-- License information
+   _**Why?**_ A minimal root keeps the entry point clean and scannable; clutter buries important files.
 
-#### Source Organization
+2. All source code **must** reside within the `src` directory.
 
-- All source code must reside within the `src` directory
-- Organize code into logical subdirectories by module/feature
+   _**Why?**_ A single source root makes build configuration simpler and keeps the repository organized.
 
-#### File Pairing
+3. Source code **should** be organized into logical subdirectories by module or feature.
 
-- Source files (.c) and header files (.h) must share the same name and directory
-- Exception: `main.c` doesn't require a header file
+   _**Why?**_ Modular organization groups related code, making navigation intuitive.
+
+4. Source files (`.c`) and header files (`.h`) **must** share the same name and directory.
+
+   _**Why?**_ Paired naming makes finding the interface for any implementation trivial.
+
+5. `main.c` **may** omit a corresponding header file.
+
+   _**Why?**_ Entry points typically don't expose APIs to other modules.
+
+**Example**
 
 ```
 src/
@@ -236,50 +579,167 @@ src/
 │   └── feature.h
 ```
 
-&nbsp;
+### Formatting code
 
-## General Contributing Guidelines
+This subsection defines code formatting conventions for consistency across the codebase.
 
-**Important:** These guidelines are replicated across all LimeOS repositories. Any changes made here, must also be applied to the `CONTRIBUTING.md` files across all other repositories to maintain consistency.
+**Example**
 
-### Understanding the Git Workflow
-
-This repository uses two main branches:
-
-- `main` - Stable release code, must not be pushed to directly.
-- `develop` - Development code, must not be pushed to directly.
-
-In order to contribute, you must follow these steps:
-
-1. Fork the repository and clone it onto your system.
-2. Create a branch from `develop` prefixed with `feature-`:
-
-```bash
-git checkout develop
-git checkout -b feature-audio-support
+```c
+if (condition)
+{
+    do_something();
+}
+else
+{
+    do_other();
+}
 ```
 
-3. Commit your changes with an informative message.
-4. Push the changes to your fork.
-5. Submit a pull request targeting the `develop` branch.
+**Rules**
 
-The changes will be reviewed by the project maintainers and contributors, after which it will be _merged or squashed_ into the `develop` branch if approved.
+1. Braces **must** follow Allman style, with opening and closing braces on their own lines.
 
-When sufficient changes accumulate in `develop`, the branch will be _rebased_ onto `main` by the project maintainers, at which point, a new release tag is also created.
+   _**Why?**_ Allman style visually aligns braces, making block boundaries easy to scan and reducing errors when modifying code.
 
-### Determining version numbers
+&nbsp;
 
-This repository adheres to Semantic Versioning (Semver), which uses a three-part version number in the following format:
+## Document Contributing Guidelines
 
-- `MAJOR` - Incremented for incompatible API changes.
-- `MINOR` - Incremented for backwards-compatible new features.
-- `PATCH` - Incremented for backwards-compatible bug fixes.
+> **Important:** This section is replicated across all LimeOS repositories. Any changes made here must also be applied to the `CONTRIBUTING.md` files across all other repositories to maintain consistency.
 
-Examples:
+### Storing document assets
 
-- `1.0.0` - Initial stable release.
-- `1.1.0` - Added new features.
-- `1.1.1` - Added bug fixes.
-- `2.0.0` - Introduced breaking changes.
+This subsection defines where to store assets used in documentation files like images, or other media.
 
-A more in-depth guide on Semver can be found [here](https://semver.org/).
+**Rules**
+
+1. Document assets **must** be stored in the `.assets` directory at the repository root.
+
+   _**Why?**_ Using a platform-agnostic name eases migration if hosting changes. Considering `.github` is a common standard.
+
+2. Assets **should** be organized into subdirectories that group related files (e.g., `.assets/banner/`, `.assets/icons/`).
+
+   _**Why?**_ Assets often need light/dark mode variants or other related versions; subdirectories keep these variants together rather than scattered across a flat structure.
+
+### Modifying CONTRIBUTING.md
+
+This subsection defines rules for authoring and updating `CONTRIBUTING.md`. Consistent structure keeps the guide scannable and ensures that contributors can extend it predictably without degrading quality over time.
+
+Subsections are primarily divided into three variants: **Guiding** subsections, **Convention** subsections and **Informational** subsections.
+
+**Templates**
+
+**Guiding**
+
+```markdown
+### [VERB:TITLE]
+
+> This subsection [RELATIONSHIP] [SECTION] ► [SUBSECTION].
+
+This subsection [ROLE & PURPOSE].
+
+First, [STEP].
+
+Then, [STEP].
+
+Finally, [STEP].
+```
+
+Where:
+
+- `VERB:TITLE` - A gerund-led title describing the action (e.g., "Running the development environment").
+- `RELATIONSHIP` - How this subsection relates to another (`"extends"`, `"gets extended by"`, `"overrides"`, `"gets overriden by"`); omit the entire note line if not applicable.
+- `SECTION ► SUBSECTION` - The target section and subsection being extended or overridden.
+- `ROLE & PURPOSE` - What this subsection does and why it exists.
+- `STEP` - A discrete action in the workflow.
+
+**Convention**
+
+```markdown
+### [VERB:TITLE]
+
+> This subsection [RELATIONSHIP] [SECTION] ► [SUBSECTION].
+
+This subsection [ROLE & PURPOSE].
+
+**Template**
+
+```[TEMPLATE]```
+
+Where:
+
+- `[PLACEHOLDER]` - [DESCRIPTION].
+
+**Example**
+
+```[EXAMPLE]```
+
+**Rules**
+
+1. [RULE]
+
+   _**Why?**_ [RATIONALE].
+```
+
+Where:
+
+- `VERB:TITLE` - A gerund-led title describing the pattern (e.g., "Naming React components").
+- `RELATIONSHIP` - How this subsection relates to another (`"extends"`, `"gets extended by"`, `"overrides"`, `"gets overriden by"`); omit the entire note line if not applicable.
+- `SECTION ► SUBSECTION` - The target section and subsection being extended or overridden.
+- `ROLE & PURPOSE` - What this subsection does and why it exists.
+- `TEMPLATE` - A reusable structure contributors should follow.
+- `PLACEHOLDER` - A variable in the template requiring explanation.
+- `DESCRIPTION` - What the placeholder means or how to fill it in.
+- `EXAMPLE` - A concrete demonstration of the template in use.
+- `RULE` - A rule statement using RFC modality (must, should, may).
+- `RATIONALE` - The concrete reason the rule exists.
+
+**Informational**
+
+```markdown
+### [VERB:TITLE]
+
+[INFORMATION].
+```
+
+Where:
+
+- `VERB:TITLE` - A gerund-led title describing the pattern (e.g., "Understanding the authentication system").
+- `INFORMATION` - The information, which could range in size from a few sentences to a few paragraphs.
+
+**Rules**
+
+1. Rules **must** include exactly one _**Why?**_ paragraph per rule.
+
+   _**Why?**_ The rule states the contract; the why preserves intent so future edits don't regress.
+
+2. "Why" paragraphs **should** explain the causal link between the rule and its benefit, not just the benefit alone.
+
+   _**Why?**_ "Consistent naming makes searches faster" explains causation; "improves code quality" just names a vague outcome without showing how the rule achieves it.
+
+3. Rules **must** use consistent modality: **must**, **must not**, **should**, **may**.
+
+   _**Why?**_ Standard wording makes requirement strength explicit to readers, reviewers, and AI.
+
+4. The `extends`/`overrides` note **must** be included when the subsection modifies or builds upon another.
+
+   _**Why?**_ Without the note, readers won't know rules conflict or stack; explicit precedence prevents misapplication.
+
+5. **Template** and **Example** sections **may** be omitted when the rules are self-evident.
+
+   _**Why?**_ Forcing examples on simple rule sets adds bulk without clarifying intent.
+
+### Modifying README.md
+
+This subsection defines rules for updating `README.md`. The README acts as a menu, a short, scannable entry point that directs readers to deeper documentation rather than duplicating it.
+
+**Rules**
+
+1. The README **must** stay short and act as a navigation hub, directing to docs like `CONTRIBUTING.md` or `LICENSE.md`.
+
+   _**Why?**_ Readers land on the README first. A concise overview with clear links gets them to the right place faster than a wall of text.
+
+2. Content **should** be moved to dedicated docs when it exceeds a few paragraphs.
+
+   _**Why?**_ Long READMEs become hard to maintain and bury the essential "what is this / how do I run it" information.
