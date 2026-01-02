@@ -39,6 +39,7 @@ This document outlines the guidelines for contributing to this repository, inclu
   &nbsp; • &nbsp; [Naming binaries](#naming-binaries)
 - [Ordering code declarations](#ordering-code-declarations)
 - [Structuring files](#structuring-files)
+- [Formatting code](#formatting-code)
 
 **Document Contributing Guidelines**
 
@@ -115,7 +116,7 @@ Finally, verify that all tests pass. If any tests fail, review the output to ide
 
 ## General Contributing Guidelines
 
-> **Important:** These guidelines are replicated across all LimeOS repositories. Any changes made here must also be applied to the `CONTRIBUTING.md` files across all other repositories to maintain consistency.
+> **Important:** This section is replicated across all LimeOS repositories. Any changes made here must also be applied to the `CONTRIBUTING.md` files across all other repositories to maintain consistency.
 
 ### Understanding the Git workflow
 
@@ -205,7 +206,7 @@ To write a commit message, think: "This commit will ..." and complete the senten
 
 ## C Language Contributing Guidelines
 
-> **Important:** These guidelines are replicated across all LimeOS repositories that use the C programming language. Any changes made here must also be applied to the `CONTRIBUTING.md` files across similar repositories to maintain consistency.
+> **Important:** This section is replicated across all LimeOS repositories that use the C programming language. Any changes made here must also be applied to the `CONTRIBUTING.md` files across similar repositories to maintain consistency.
 
 ### Writing documentation
 
@@ -575,11 +576,34 @@ src/
 │   └── feature.h
 ```
 
+### Formatting code
+
+This subsection defines code formatting conventions for consistency across the codebase.
+
+**Example**
+
+```c
+if (condition)
+{
+    do_something();
+}
+else
+{
+    do_other();
+}
+```
+
+**Rules**
+
+1. Braces **must** follow Allman style, with opening and closing braces on their own lines.
+
+   _**Why?**_ Allman style visually aligns braces, making block boundaries easy to scan and reducing errors when modifying code.
+
 &nbsp;
 
 ## Document Contributing Guidelines
 
-> **Important:** These guidelines are replicated across all LimeOS repositories. Any changes made here must also be applied to the `CONTRIBUTING.md` files across all other repositories to maintain consistency.
+> **Important:** This section is replicated across all LimeOS repositories. Any changes made here must also be applied to the `CONTRIBUTING.md` files across all other repositories to maintain consistency.
 
 ### Storing document assets
 
