@@ -126,7 +126,7 @@ A more in-depth guide on SemVer can be found [here](https://semver.org/).
 
 This subsection establishes guidelines for documenting code through comments and Doxygen annotations. Clear documentation reduces onboarding time for new contributors, prevents bugs, and ensures the long-term sustainability of the project.
 
-General rules for commenting:
+**Rules**
 
 1. Comment lines **must not** exceed 80 characters in length, including whitespace.
 
@@ -577,7 +577,7 @@ Where:
 
 This subsection [ROLE & PURPOSE].
 
-**Template(s)**
+**Template**
 
 ```[TEMPLATE]```
 
@@ -585,11 +585,11 @@ Where:
 
 - `[PLACEHOLDER]` - [DESCRIPTION].
 
-**Example(s)**
+**Example**
 
 ```[EXAMPLE]```
 
-**Rule(s)**
+**Rules**
 
 1. [RULE]
 
@@ -640,7 +640,7 @@ Where:
 
    _**Why?**_ Without the note, readers won't know rules conflict or stack; explicit precedence prevents misapplication.
 
-5. **Template(s)** and **Example(s)** sections **may** be omitted when the rules are self-evident.
+5. **Template** and **Example** sections **may** be omitted when the rules are self-evident.
 
    _**Why?**_ Forcing examples on simple rule sets adds bulk without clarifying intent.
 
