@@ -211,13 +211,13 @@ and simplify debugging with tools like `git bisect`.
 **Template**
 
 ```
-[VERB:ACTION]
+[VERB] [ACTION]
 ```
 
 Where:
 
-- `VERB` - An imperative verb (e.g., "Add", "Fix", "Remove", "Update").
-- `ACTION` - What the commit accomplishes.
+- `[VERB]` - An imperative verb (e.g., "Add", "Fix", "Remove", "Update").
+- `[ACTION]` - What the commit accomplishes.
 
 To produce this format, think: "This commit will ..." and complete the sentence.
 The completion is your subject line.
@@ -296,14 +296,14 @@ maintainers to understand the algorithm without parsing every line.
 **Template**
 
 ```c
-// [VERB:ACTION].
+// [VERB] [ACTION].
 ```
 
 Where:
 
-- `VERB` - Indicates the sentence must start with a verb (e.g., "Ensure",
+- `[VERB]` - Indicates the sentence must start with a verb (e.g., "Ensure",
   "Validate", "Calculate").
-- `ACTION` - What the step accomplishes.
+- `[ACTION]` - What the step accomplishes.
 
 **Example**
 
@@ -373,30 +373,30 @@ files and provide intent that signatures alone cannot express.
 1\. Identity template, for things that _are_ (types, macros, global variables):
 
 ```c
-/** A/The [THING] [RELATIONSHIP] [ROLE/PURPOSE]. */
+/** A/The [THING] [RELATIONSHIP] [ROLE / PURPOSE]. */
 ```
 
 Where:
 
 - `A/The` - `"A"` for instances (types), `"The"` for singletons (macros, global
   variables).
-- `THING` - What it literally is (`"type"`, `"maximum retry count"`,
+- `[THING]` - What it literally is (`"type"`, `"maximum retry count"`,
   `"configuration struct"`).
-- `RELATIONSHIP` - How it relates to its role (`"representing"`, `"for"`,
+- `[RELATIONSHIP]` - How it relates to its role (`"representing"`, `"for"`,
   `"defining"`).
-- `ROLE/PURPOSE` - What it's for.
+- `[ROLE / PURPOSE]` - What it's for.
 
 2\. Action template, for things that _do_ (functions):
 
 ```c
-/** [VERB:ACTION]. */
+/** [VERB] [ACTION]. */
 ```
 
 Where:
 
-- `VERB` - Indicates the sentence must start with a verb (e.g., "Validates",
+- `[VERB]` - Indicates the sentence must start with a verb (e.g., "Validates",
   "Calculates", "Fetches").
-- `ACTION` - What it does, including its primary output or effect.
+- `[ACTION]` - What it does, including its primary output or effect.
 
 3\. Expanded template, which extends either the identity or action templates:
 
@@ -416,14 +416,14 @@ Where:
 
 Where:
 
-- `IDENTITY or ACTION` - The first line, following either template above.
-- `PURPOSE` - Additional context explaining why, if not obvious from the
+- `[IDENTITY or ACTION]` - The first line, following either template above.
+- `[PURPOSE]` - Additional context explaining why, if not obvious from the
   first line.
-- `NAME` - The parameter name.
-- `DESCRIPTION` - What the parameter is used for.
-- `VALUE` - What the function returns.
-- `DESCRIPTION` - What the return value means.
-- `ADDITIONAL CONTEXT` - Optional. Any caveats or assumptions that don't fit
+- `[NAME] [DESCRIPTION]` - The parameter name, and what the parameter is used
+  for.
+- `[VALUE] [DESCRIPTION]` - What the function returns, and what that value
+  means.
+- `[ADDITIONAL CONTEXT]` - Optional. Any caveats or assumptions that don't fit
   elsewhere.
 
 **Example**
@@ -828,7 +828,7 @@ Subsections are primarily divided into three variants: **Guiding** subsections,
 **Guiding**
 
 ```markdown
-### [VERB:TITLE]
+### [VERB] [TITLE]
 
 > This subsection [RELATIONSHIP] [SECTION] ► [SUBSECTION].
 
@@ -843,20 +843,20 @@ Finally, [STEP].
 
 Where:
 
-- `VERB:TITLE` - A gerund-led title describing the action (e.g., "Running the
-  development environment").
-- `RELATIONSHIP` - How this subsection relates to another (`"extends"`,
+- `[VERB] [TITLE]` - A gerund-led title describing the action (e.g., "Running
+  the development environment").
+- `[RELATIONSHIP]` - How this subsection relates to another (`"extends"`,
   `"gets extended by"`, `"overrides"`, `"gets overridden by"`); omit the entire
   note line if not applicable.
-- `SECTION ► SUBSECTION` - The target section and subsection being extended or
-  overridden.
-- `ROLE & PURPOSE` - What this subsection does and why it exists.
-- `STEP` - A discrete action in the workflow.
+- `[SECTION] ► [SUBSECTION]` - The target section and subsection being extended
+  or overridden.
+- `[ROLE & PURPOSE]` - What this subsection does and why it exists.
+- `[STEP]` - A discrete action in the workflow.
 
 **Convention**
 
 ```markdown
-### [VERB:TITLE]
+### [VERB] [TITLE]
 
 > This subsection [RELATIONSHIP] [SECTION] ► [SUBSECTION].
 
@@ -883,34 +883,34 @@ Where:
 
 Where:
 
-- `VERB:TITLE` - A gerund-led title describing the pattern (e.g., "Naming React
-  components").
-- `RELATIONSHIP` - How this subsection relates to another (`"extends"`,
+- `[VERB] [TITLE]` - A gerund-led title describing the pattern (e.g., "Naming
+  React components").
+- `[RELATIONSHIP]` - How this subsection relates to another (`"extends"`,
   `"gets extended by"`, `"overrides"`, `"gets overridden by"`); omit the entire
   note line if not applicable.
-- `SECTION ► SUBSECTION` - The target section and subsection being extended or
-  overridden.
-- `ROLE & PURPOSE` - What this subsection does and why it exists.
-- `TEMPLATE` - A reusable structure contributors should follow.
-- `PLACEHOLDER` - A variable in the template requiring explanation.
-- `DESCRIPTION` - What the placeholder means or how to fill it in.
-- `EXAMPLE` - A concrete demonstration of the template in use.
-- `RULE` - A rule statement using RFC modality (must, should, may).
-- `RATIONALE` - The concrete reason the rule exists.
+- `[SECTION] ► [SUBSECTION]` - The target section and subsection being extended
+  or overridden.
+- `[ROLE & PURPOSE]` - What this subsection does and why it exists.
+- `[TEMPLATE]` - A reusable structure contributors should follow.
+- `[PLACEHOLDER]` - A variable in the template requiring explanation.
+- `[DESCRIPTION]` - What the placeholder means or how to fill it in.
+- `[EXAMPLE]` - A concrete demonstration of the template in use.
+- `[RULE]` - A rule statement using RFC modality (must, should, may).
+- `[RATIONALE]` - The concrete reason the rule exists.
 
 **Informational**
 
 ```markdown
-### [VERB:TITLE]
+### [VERB] [TITLE]
 
 [INFORMATION].
 ```
 
 Where:
 
-- `VERB:TITLE` - A gerund-led title describing the pattern (e.g., "Understanding
-  the authentication system").
-- `INFORMATION` - The information, which could range in size from a few
+- `[VERB] [TITLE]` - A gerund-led title describing the pattern (e.g.,
+  "Understanding the authentication system").
+- `[INFORMATION]` - The information, which could range in size from a few
   sentences to a few paragraphs.
 
 **Rules**
