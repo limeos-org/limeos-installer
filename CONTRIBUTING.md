@@ -827,7 +827,7 @@ Where:
 - `VERB:TITLE` - A gerund-led title describing the action (e.g., "Running the
   development environment").
 - `RELATIONSHIP` - How this subsection relates to another (`"extends"`,
-  `"gets extended by"`, `"overrides"`, `"gets overriden by"`); omit the entire
+  `"gets extended by"`, `"overrides"`, `"gets overridden by"`); omit the entire
   note line if not applicable.
 - `SECTION ► SUBSECTION` - The target section and subsection being extended or
   overridden.
@@ -867,7 +867,7 @@ Where:
 - `VERB:TITLE` - A gerund-led title describing the pattern (e.g., "Naming React
   components").
 - `RELATIONSHIP` - How this subsection relates to another (`"extends"`,
-  `"gets extended by"`, `"overrides"`, `"gets overriden by"`); omit the entire
+  `"gets extended by"`, `"overrides"`, `"gets overridden by"`); omit the entire
   note line if not applicable.
 - `SECTION ► SUBSECTION` - The target section and subsection being extended or
   overridden.
