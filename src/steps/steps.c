@@ -134,7 +134,7 @@ int run_selection_step(
         scroll_offset = current - max_visible + 1;
     }
 
-    // Main input loop.
+    // Run main input loop.
     while (1)
     {
         // Clear modal and render step header.
@@ -200,12 +200,12 @@ int run_selection_step(
                 break;
 
             case '\n':
-                // User confirmed selection.
+                // Store selection and return success when user confirms.
                 *out_selected = current;
                 return 1;
 
             case 27:
-                // User pressed Escape to go back.
+                // Return 0 when user presses Escape to go back.
                 if (allow_back)
                 {
                     return 0;

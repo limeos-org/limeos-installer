@@ -7,19 +7,19 @@
 
 static int get_locale_priority(const char *locale)
 {
-    // Priority 1: en_US is the most common default.
+    // Return priority 1 for en_US as the most common default.
     if (strncmp(locale, "en_US", 5) == 0)
     {
         return 1;
     }
 
-    // Priority 2: Other English locales.
+    // Return priority 2 for other English locales.
     if (strncmp(locale, "en_", 3) == 0)
     {
         return 2;
     }
 
-    // Priority 3: Major European locales.
+    // Return priority 3 for major European locales.
     if (strncmp(locale, "de_", 3) == 0 ||
         strncmp(locale, "fr_", 3) == 0 ||
         strncmp(locale, "es_", 3) == 0 ||
@@ -30,7 +30,7 @@ static int get_locale_priority(const char *locale)
         return 3;
     }
 
-    // Priority 4: All other locales.
+    // Return priority 4 for all other locales.
     return 4;
 }
 
@@ -48,7 +48,7 @@ static int compare_locales(const void *a, const void *b)
         return priority_a - priority_b;
     }
 
-    // Then alphabetically within same priority.
+    // Sort alphabetically within same priority.
     return strcmp(option_a->value, option_b->value);
 }
 
@@ -75,7 +75,7 @@ int populate_locale_options(StepOption *out_options, int max_count)
     FILE *pipe = popen("locale -a 2>/dev/null", "r");
     if (pipe == NULL)
     {
-        // Fallback to a default locale if detection fails.
+        // Use fallback locale if detection fails.
         snprintf(out_options[0].value, sizeof(out_options[0].value), "en_US.UTF-8");
         snprintf(out_options[0].label, sizeof(out_options[0].label), "en_US.UTF-8 (Default)");
         return 1;

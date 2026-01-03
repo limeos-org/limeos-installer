@@ -11,7 +11,7 @@ int populate_disk_options(StepOption *out_options, int max_count)
     DIR *dir = opendir("/sys/block");
     if (dir == NULL)
     {
-        // Fallback if `/sys/block` is unavailable.
+        // Use fallback if `/sys/block` is unavailable.
         snprintf(out_options[0].value, sizeof(out_options[0].value), "/dev/sda");
         snprintf(out_options[0].label, sizeof(out_options[0].label), "/dev/sda (Unknown size)");
         return 1;

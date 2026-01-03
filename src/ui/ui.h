@@ -24,7 +24,7 @@
 /**
  * Initializes the ncurses library and configures color pairs.
  */
-void init_ui(void);
+void initialize_ui(void);
 
 /**
  * Cleans up ncurses and restores terminal state.

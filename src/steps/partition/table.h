@@ -6,14 +6,22 @@
  */
 #define MAX_VISIBLE_PARTITIONS 3
 
-/**
- * Column widths for partition table.
- */
+/** The column width for partition number. */
 #define COL_WIDTH_NUM    2
+
+/** The column width for partition size. */
 #define COL_WIDTH_SIZE   10
+
+/** The column width for mount point. */
 #define COL_WIDTH_MOUNT  8
+
+/** The column width for filesystem type. */
 #define COL_WIDTH_FS     5
+
+/** The column width for partition type. */
 #define COL_WIDTH_TYPE   8
+
+/** The column width for partition flags. */
 #define COL_WIDTH_FLAGS  6
 
 /**
@@ -37,12 +45,12 @@ const char *type_to_string(PartitionType type);
 /**
  * Renders the partition table in the modal window.
  *
- * @param modal                   The modal window to draw in.
- * @param store                   The global store containing partitions.
- * @param disk_size               Total disk size in bytes.
- * @param selected_partition      Index of selected partition (-1 for none).
- * @param in_partition_select_mode Whether selection highlighting is active.
- * @param scroll_offset           First visible partition index.
+ * @param modal                     The modal window to draw in.
+ * @param store                     The global store containing partitions.
+ * @param disk_size                 Total disk size in bytes.
+ * @param selected_partition        Index of selected partition (-1 for none).
+ * @param in_partition_select_mode  Whether selection highlighting is active.
+ * @param scroll_offset             First visible partition index.
  */
 void render_partition_table(
     WINDOW *modal, Store *store, unsigned long long disk_size,

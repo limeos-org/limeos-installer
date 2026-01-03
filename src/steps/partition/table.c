@@ -1,3 +1,8 @@
+/**
+ * This code is responsible for rendering the partition table display and
+ * providing utility functions for converting partition types to strings.
+ */
+
 #include "../../all.h"
 
 const char *fs_to_string(PartitionFS fs)

@@ -5,9 +5,7 @@
 
 #include "../all.h"
 
-/**
- * Sets up the test environment before each test.
- */
+/** Sets up the test environment before each test. */
 static int setup(void **state)
 {
     (void)state;
@@ -15,18 +13,14 @@ static int setup(void **state)
     return 0;
 }
 
-/**
- * Cleans up the test environment after each test.
- */
+/** Cleans up the test environment after each test. */
 static int teardown(void **state)
 {
     (void)state;
     return 0;
 }
 
-/**
- * Verifies format_disk_size() correctly formats byte values.
- */
+/** Verifies format_disk_size() correctly formats byte values. */
 static void test_format_disk_size_bytes(void **state)
 {
     (void)state;
@@ -37,9 +31,7 @@ static void test_format_disk_size_bytes(void **state)
     assert_string_equal("512 B", buffer);
 }
 
-/**
- * Verifies format_disk_size() handles zero bytes.
- */
+/** Verifies format_disk_size() handles zero bytes. */
 static void test_format_disk_size_zero_bytes(void **state)
 {
     (void)state;
@@ -50,9 +42,7 @@ static void test_format_disk_size_zero_bytes(void **state)
     assert_string_equal("0 B", buffer);
 }
 
-/**
- * Verifies format_disk_size() correctly formats megabyte values.
- */
+/** Verifies format_disk_size() correctly formats megabyte values. */
 static void test_format_disk_size_megabytes(void **state)
 {
     (void)state;
@@ -63,9 +53,7 @@ static void test_format_disk_size_megabytes(void **state)
     assert_string_equal("500 MB", buffer);
 }
 
-/**
- * Verifies format_disk_size() correctly formats gigabyte values.
- */
+/** Verifies format_disk_size() correctly formats gigabyte values. */
 static void test_format_disk_size_gigabytes(void **state)
 {
     (void)state;
@@ -76,9 +64,7 @@ static void test_format_disk_size_gigabytes(void **state)
     assert_string_equal("1 GB", buffer);
 }
 
-/**
- * Verifies format_disk_size() correctly formats terabyte values.
- */
+/** Verifies format_disk_size() correctly formats terabyte values. */
 static void test_format_disk_size_terabytes(void **state)
 {
     (void)state;
@@ -89,9 +75,7 @@ static void test_format_disk_size_terabytes(void **state)
     assert_string_equal("1 TB", buffer);
 }
 
-/**
- * Verifies format_disk_size() output fits in a minimal buffer.
- */
+/** Verifies format_disk_size() output fits in a minimal buffer. */
 static void test_format_disk_size_small_buffer(void **state)
 {
     (void)state;
@@ -103,9 +87,7 @@ static void test_format_disk_size_small_buffer(void **state)
     assert_string_equal("1 TB", buffer);
 }
 
-/**
- * Verifies sum_partition_sizes() returns zero for empty partition array.
- */
+/** Verifies sum_partition_sizes() returns zero for empty partition array. */
 static void test_sum_partition_sizes_empty(void **state)
 {
     (void)state;
@@ -116,9 +98,7 @@ static void test_sum_partition_sizes_empty(void **state)
     assert_int_equal(0, (int)total);
 }
 
-/**
- * Verifies sum_partition_sizes() correctly sums a single partition.
- */
+/** Verifies sum_partition_sizes() correctly sums a single partition. */
 static void test_sum_partition_sizes_single(void **state)
 {
     (void)state;
@@ -131,9 +111,7 @@ static void test_sum_partition_sizes_single(void **state)
     assert_true(total == 1000000000ULL);
 }
 
-/**
- * Verifies sum_partition_sizes() correctly sums multiple partitions.
- */
+/** Verifies sum_partition_sizes() correctly sums multiple partitions. */
 static void test_sum_partition_sizes_multiple(void **state)
 {
     (void)state;
@@ -180,9 +158,7 @@ static void test_get_partition_device_sata_first(void **state)
     assert_string_equal("/dev/sda1", buffer);
 }
 
-/**
- * Verifies get_partition_device() handles double-digit partition numbers.
- */
+/** Verifies get_partition_device() handles double-digit partition numbers. */
 static void test_get_partition_device_sata_tenth(void **state)
 {
     (void)state;
@@ -194,9 +170,7 @@ static void test_get_partition_device_sata_tenth(void **state)
     assert_string_equal("/dev/sda10", buffer);
 }
 
-/**
- * Verifies get_partition_device() works with secondary SATA disk.
- */
+/** Verifies get_partition_device() works with secondary SATA disk. */
 static void test_get_partition_device_sdb(void **state)
 {
     (void)state;
@@ -207,9 +181,7 @@ static void test_get_partition_device_sdb(void **state)
     assert_string_equal("/dev/sdb2", buffer);
 }
 
-/**
- * Verifies get_partition_device() uses 'p' separator for NVMe devices.
- */
+/** Verifies get_partition_device() uses 'p' separator for NVMe devices. */
 static void test_get_partition_device_nvme(void **state)
 {
     (void)state;
@@ -221,9 +193,7 @@ static void test_get_partition_device_nvme(void **state)
     assert_string_equal("/dev/nvme0n1p1", buffer);
 }
 
-/**
- * Verifies get_partition_device() handles second NVMe partition.
- */
+/** Verifies get_partition_device() handles second NVMe partition. */
 static void test_get_partition_device_nvme_second(void **state)
 {
     (void)state;
@@ -234,9 +204,7 @@ static void test_get_partition_device_nvme_second(void **state)
     assert_string_equal("/dev/nvme0n1p2", buffer);
 }
 
-/**
- * Verifies get_partition_device() works with second NVMe controller.
- */
+/** Verifies get_partition_device() works with second NVMe controller. */
 static void test_get_partition_device_nvme_high_number(void **state)
 {
     (void)state;
@@ -248,9 +216,7 @@ static void test_get_partition_device_nvme_high_number(void **state)
     assert_string_equal("/dev/nvme1n1p5", buffer);
 }
 
-/**
- * Verifies get_partition_device() uses 'p' separator for MMC devices.
- */
+/** Verifies get_partition_device() uses 'p' separator for MMC devices. */
 static void test_get_partition_device_mmc(void **state)
 {
     (void)state;
@@ -262,9 +228,7 @@ static void test_get_partition_device_mmc(void **state)
     assert_string_equal("/dev/mmcblk0p1", buffer);
 }
 
-/**
- * Verifies get_partition_device() handles second MMC partition.
- */
+/** Verifies get_partition_device() handles second MMC partition. */
 static void test_get_partition_device_mmc_second(void **state)
 {
     (void)state;
@@ -275,9 +239,7 @@ static void test_get_partition_device_mmc_second(void **state)
     assert_string_equal("/dev/mmcblk0p2", buffer);
 }
 
-/**
- * Verifies get_partition_device() uses standard naming for VirtIO devices.
- */
+/** Verifies get_partition_device() uses standard naming for VirtIO devices. */
 static void test_get_partition_device_vda(void **state)
 {
     (void)state;
@@ -289,9 +251,7 @@ static void test_get_partition_device_vda(void **state)
     assert_string_equal("/dev/vda1", buffer);
 }
 
-/**
- * Verifies get_partition_device() uses standard naming for Xen devices.
- */
+/** Verifies get_partition_device() uses standard naming for Xen devices. */
 static void test_get_partition_device_xvda(void **state)
 {
     (void)state;
@@ -303,9 +263,7 @@ static void test_get_partition_device_xvda(void **state)
     assert_string_equal("/dev/xvda3", buffer);
 }
 
-/**
- * Verifies get_disk_size() returns zero for path traversal attempts.
- */
+/** Verifies get_disk_size() returns zero for path traversal attempts. */
 static void test_get_disk_size_rejects_path_traversal(void **state)
 {
     (void)state;
@@ -315,9 +273,7 @@ static void test_get_disk_size_rejects_path_traversal(void **state)
     assert_int_equal(0, (int)get_disk_size("/dev/../etc/passwd"));
 }
 
-/**
- * Verifies get_disk_size() returns zero for empty device name.
- */
+/** Verifies get_disk_size() returns zero for empty device name. */
 static void test_get_disk_size_rejects_empty_string(void **state)
 {
     (void)state;
@@ -325,9 +281,7 @@ static void test_get_disk_size_rejects_empty_string(void **state)
     assert_int_equal(0, (int)get_disk_size(""));
 }
 
-/**
- * Verifies get_disk_size() returns zero for device with special characters.
- */
+/** Verifies get_disk_size() returns zero for device with special characters. */
 static void test_get_disk_size_rejects_special_chars(void **state)
 {
     (void)state;
@@ -338,9 +292,7 @@ static void test_get_disk_size_rejects_special_chars(void **state)
     assert_int_equal(0, (int)get_disk_size("sda$(cat /etc/passwd)"));
 }
 
-/**
- * Verifies get_disk_size() returns zero for non-existent device.
- */
+/** Verifies get_disk_size() returns zero for non-existent device. */
 static void test_get_disk_size_nonexistent_device(void **state)
 {
     (void)state;
@@ -349,9 +301,7 @@ static void test_get_disk_size_nonexistent_device(void **state)
     assert_int_equal(0, (int)get_disk_size("nonexistent_device_xyz"));
 }
 
-/**
- * Verifies get_disk_size() handles full path format.
- */
+/** Verifies get_disk_size() handles full path format. */
 static void test_get_disk_size_handles_full_path(void **state)
 {
     (void)state;
@@ -361,9 +311,7 @@ static void test_get_disk_size_handles_full_path(void **state)
     assert_int_equal(0, (int)size);
 }
 
-/**
- * Verifies is_disk_removable() returns zero for path traversal attempts.
- */
+/** Verifies is_disk_removable() returns zero for path traversal attempts. */
 static void test_is_disk_removable_rejects_path_traversal(void **state)
 {
     (void)state;
@@ -373,9 +321,7 @@ static void test_is_disk_removable_rejects_path_traversal(void **state)
     assert_int_equal(0, is_disk_removable(".."));
 }
 
-/**
- * Verifies is_disk_removable() returns zero for empty device name.
- */
+/** Verifies is_disk_removable() returns zero for empty device name. */
 static void test_is_disk_removable_rejects_empty_string(void **state)
 {
     (void)state;
@@ -395,9 +341,7 @@ static void test_is_disk_removable_rejects_special_chars(void **state)
     assert_int_equal(0, is_disk_removable("sda|cat /etc/passwd"));
 }
 
-/**
- * Verifies is_disk_removable() returns zero for non-existent device.
- */
+/** Verifies is_disk_removable() returns zero for non-existent device. */
 static void test_is_disk_removable_nonexistent_device(void **state)
 {
     (void)state;
@@ -406,9 +350,7 @@ static void test_is_disk_removable_nonexistent_device(void **state)
     assert_int_equal(0, is_disk_removable("nonexistent_device_xyz"));
 }
 
-/**
- * Verifies get_disk_size() accepts valid device names with underscores.
- */
+/** Verifies get_disk_size() accepts valid device names with underscores. */
 static void test_get_disk_size_accepts_underscore(void **state)
 {
     (void)state;

@@ -419,12 +419,13 @@ FormResult handle_form_key(
 
 void render_footer(WINDOW *modal, const char **items)
 {
+    // Iterate through footer items and render each one.
     int x = 3;
     for (int item_index = 0; items[item_index] != NULL; item_index++)
     {
         if (item_index > 0)
         {
-            x += 2; // 2 space gap between items.
+            x += 2; // Add 2 space gap between items.
         }
 
         const char *cursor = items[item_index];
@@ -445,7 +446,7 @@ void render_footer(WINDOW *modal, const char **items)
                 }
                 else
                 {
-                    // No closing bracket, render rest in gray.
+                    // Render rest in gray when no closing bracket found.
                     wattron(modal, COLOR_PAIR(CUSTOM_COLOR_PAIR_DIM));
                     mvwprintw(modal, MODAL_HEIGHT - 2, x, "%s", cursor);
                     wattroff(modal, COLOR_PAIR(CUSTOM_COLOR_PAIR_DIM));

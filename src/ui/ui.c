@@ -1,11 +1,6 @@
-/**
- * This code is responsible for initializing and cleaning up the ncurses
- * terminal UI library.
- */
-
 #include "../all.h"
 
-void init_ui(void)
+void initialize_ui(void)
 {
     // Initialize ncurses screen and disable input buffering.
     initscr();

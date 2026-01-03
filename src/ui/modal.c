@@ -1,8 +1,3 @@
-/**
- * This code is responsible for creating and managing modal dialog windows
- * within the ncurses interface.
- */
-
 #include "../all.h"
 
 WINDOW *create_modal(const char *title)

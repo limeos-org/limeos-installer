@@ -1,3 +1,8 @@
+/**
+ * This code is responsible for providing dialog interfaces for adding, editing,
+ * and removing partitions during the installation process.
+ */
+
 #include "../../all.h"
 
 #define SIZE_COUNT 22
@@ -71,7 +76,7 @@ static int find_closest_size_idx(unsigned long long size)
         }
     }
 
-    // Default to largest size if no closer match found.
+    // Return largest size index if no closer match found.
     return SIZE_COUNT - 1;
 }
 
@@ -92,7 +97,7 @@ static int find_mount_idx(const char *mount)
         }
     }
 
-    // Default to root mount point if not found.
+    // Return root mount point index if not found.
     return 0;
 }
 
@@ -113,7 +118,7 @@ static int run_partition_form(
 {
     int focused = FIELD_SIZE;
 
-    // Main form loop.
+    // Run main form loop.
     while (1)
     {
         // Check if selected size exceeds available space.
@@ -190,7 +195,7 @@ static int select_partition(
     int selected = 0;
     int scroll_offset = 0;
 
-    // Loop indefinitely until user makes a selection or cancels.
+    // Run loop until user makes a selection or cancels.
     while (1)
     {
         // Clear modal and render selection header.
@@ -239,7 +244,7 @@ static int select_partition(
         }
         else if (key == 27)
         {
-            // User cancelled selection.
+            // Return -1 to indicate user cancelled selection.
             return -1;
         }
     }
@@ -277,9 +282,8 @@ int add_partition_dialog(
         return 0;
     }
 
+    // Create new partition, setting size and clamping to free space.
     Partition new_partition = {0};
-
-    // Set partition size, clamping to available free space.
     new_partition.size_bytes = size_presets[size_idx];
     if (new_partition.size_bytes > free_space)
     {
@@ -289,14 +293,19 @@ int add_partition_dialog(
     // Set mount point and filesystem based on selection.
     if (mount_idx == 4)
     {
-        snprintf(new_partition.mount_point, sizeof(new_partition.mount_point),
-                 "[swap]");
+        snprintf(
+            new_partition.mount_point,
+            sizeof(new_partition.mount_point),
+            "[swap]"
+        );
         new_partition.filesystem = FS_SWAP;
     }
     else
     {
-        snprintf(new_partition.mount_point, sizeof(new_partition.mount_point),
-                 "%s", mount_options[mount_idx]);
+        snprintf(
+            new_partition.mount_point, sizeof(new_partition.mount_point),
+            "%s", mount_options[mount_idx]
+        );
         new_partition.filesystem = FS_EXT4;
     }
 
@@ -374,8 +383,11 @@ int edit_partition_dialog(
     }
     else
     {
-        snprintf(p->mount_point, sizeof(p->mount_point), "%s",
-                 mount_options[mount_idx]);
+        snprintf(
+            p->mount_point, sizeof(p->mount_point),
+            "%s",
+            mount_options[mount_idx]
+        );
         p->filesystem = FS_EXT4;
     }
 

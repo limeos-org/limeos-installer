@@ -5,9 +5,7 @@
 
 #include "../all.h"
 
-/**
- * Sets up the test environment before each test.
- */
+/** Sets up the test environment before each test. */
 static int setup(void **state)
 {
     (void)state;
@@ -15,18 +13,14 @@ static int setup(void **state)
     return 0;
 }
 
-/**
- * Cleans up the test environment after each test.
- */
+/** Cleans up the test environment after each test. */
 static int teardown(void **state)
 {
     (void)state;
     return 0;
 }
 
-/**
- * Verifies that get_store() returns a valid non-null pointer.
- */
+/** Verifies that get_store() returns a valid non-null pointer. */
 static void test_get_store_returns_non_null(void **state)
 {
     (void)state;
@@ -46,9 +40,7 @@ static void test_get_store_returns_same_instance(void **state)
     assert_ptr_equal(store1, store2);
 }
 
-/**
- * Verifies that reset_store() resets current_step to zero.
- */
+/** Verifies that reset_store() resets current_step to zero. */
 static void test_reset_store_clears_current_step(void **state)
 {
     (void)state;
@@ -58,9 +50,7 @@ static void test_reset_store_clears_current_step(void **state)
     assert_int_equal(0, store->current_step);
 }
 
-/**
- * Verifies that reset_store() resets dry_run flag to zero.
- */
+/** Verifies that reset_store() resets dry_run flag to zero. */
 static void test_reset_store_clears_dry_run(void **state)
 {
     (void)state;
@@ -70,9 +60,7 @@ static void test_reset_store_clears_dry_run(void **state)
     assert_int_equal(0, store->dry_run);
 }
 
-/**
- * Verifies that reset_store() clears the locale string.
- */
+/** Verifies that reset_store() clears the locale string. */
 static void test_reset_store_clears_locale(void **state)
 {
     (void)state;
@@ -82,9 +70,7 @@ static void test_reset_store_clears_locale(void **state)
     assert_string_equal("", store->locale);
 }
 
-/**
- * Verifies that reset_store() clears the disk path string.
- */
+/** Verifies that reset_store() clears the disk path string. */
 static void test_reset_store_clears_disk(void **state)
 {
     (void)state;
@@ -94,9 +80,7 @@ static void test_reset_store_clears_disk(void **state)
     assert_string_equal("", store->disk);
 }
 
-/**
- * Verifies that reset_store() resets partition_count to zero.
- */
+/** Verifies that reset_store() resets partition_count to zero. */
 static void test_reset_store_clears_partition_count(void **state)
 {
     (void)state;
@@ -106,9 +90,7 @@ static void test_reset_store_clears_partition_count(void **state)
     assert_int_equal(0, store->partition_count);
 }
 
-/**
- * Verifies that reset_store() zeroes all partition structure fields.
- */
+/** Verifies that reset_store() zeroes all partition structure fields. */
 static void test_reset_store_clears_partitions(void **state)
 {
     (void)state;
@@ -124,9 +106,7 @@ static void test_reset_store_clears_partitions(void **state)
     assert_string_equal("", store->partitions[0].mount_point);
 }
 
-/**
- * Verifies the locale field can hold a maximum-length string.
- */
+/** Verifies the locale field can hold a maximum-length string. */
 static void test_store_locale_max_length(void **state)
 {
     (void)state;

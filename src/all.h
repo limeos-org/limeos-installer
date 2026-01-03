@@ -15,9 +15,9 @@
 #include <dlfcn.h>
 
 #include "store/store.h"
-#include "utils/cmd.h"
+#include "utils/command.h"
 #include "utils/disk.h"
-#include "utils/deps.h"
+#include "utils/dependencies.h"
 #include "ui/ui.h"
 #include "ui/modal.h"
 #include "ui/interfaces.h"

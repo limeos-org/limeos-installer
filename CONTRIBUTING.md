@@ -294,9 +294,7 @@ Indicative comments document code element declarations (functions, types, macros
 1\. Identity template, for things that _are_ (types, macros, global variables):
 
 ```c
-/**
- * A/The [THING] [RELATIONSHIP] [ROLE/PURPOSE].
- */
+/** A/The [THING] [RELATIONSHIP] [ROLE/PURPOSE]. */
 ```
 
 Where:
@@ -309,9 +307,7 @@ Where:
 2\. Action template, for things that _do_ (functions):
 
 ```c
-/**
- * [VERB:ACTION].
- */
+/** [VERB:ACTION]. */
 ```
 
 Where:
@@ -329,7 +325,7 @@ Where:
  *
  * @param [NAME] [DESCRIPTION].
  *
- * @return [VALUE].
+ * @return - `[VALUE]` - [DESCRIPTION].
  *
  * @note [ADDITIONAL CONTEXT].
  */
@@ -342,6 +338,7 @@ Where:
 - `NAME` - The parameter name.
 - `DESCRIPTION` - What the parameter is used for.
 - `VALUE` - What the function returns.
+- `DESCRIPTION` - What the return value means.
 - `ADDITIONAL CONTEXT` - Optional. Any caveats or assumptions that don't fit elsewhere.
 
 **Example**
@@ -401,6 +398,14 @@ int connect_to_server(const char *host);
 6. Complex source files **should** begin with a file header comment placed above any includes. The file header comment **must** use `/** ... */` but **must not** include any Doxygen tags and **should** begin with "This code is responsible for".
 
    _**Why?**_ File-level context helps readers understand the module's purpose immediately, before any implementation details.
+
+7. Functions with multiple failure modes **should** use distinct negative return values for each error type (e.g., `-1`, `-2`, `-3`).
+
+   _**Why?**_ Distinct codes let callers identify specific failures without inspecting global state or logs.
+
+8. Functions with multiple return values **should** document each with a separate `@return` entry.
+
+   _**Why?**_ Separate entries make all possible outcomes scannable at a glance.
 
 ### Naming code elements and files
 

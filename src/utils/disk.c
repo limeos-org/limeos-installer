@@ -1,3 +1,8 @@
+/**
+ * This code is responsible for disk-related utility functions including
+ * size formatting, device detection, and partition path construction.
+ */
+
 #include "../all.h"
 
 static int is_valid_device_name(const char *device)
@@ -9,9 +14,9 @@ static int is_valid_device_name(const char *device)
     }
 
     // Allow only alphanumeric characters and underscores.
-    for (const char *c = device; *c != '\0'; c++)
+    for (const char *character = device; *character != '\0'; character++)
     {
-        if (!isalnum((unsigned char)*c) && *c != '_')
+        if (!isalnum((unsigned char)*character) && *character != '_')
         {
             return 0;
         }
@@ -22,14 +27,22 @@ static int is_valid_device_name(const char *device)
 
 void format_disk_size(unsigned long long bytes, char *out_buffer, size_t buffer_size)
 {
+    // Format size with appropriate unit based on magnitude.
     double size = (double)bytes;
-    if (size >= 1e12) {
+    if (size >= 1e12)
+    {
         snprintf(out_buffer, buffer_size, "%.0f TB", size / 1e12);
-    } else if (size >= 1e9) {
+    }
+    else if (size >= 1e9)
+    {
         snprintf(out_buffer, buffer_size, "%.0f GB", size / 1e9);
-    } else if (size >= 1e6) {
+    }
+    else if (size >= 1e6)
+    {
         snprintf(out_buffer, buffer_size, "%.0f MB", size / 1e6);
-    } else {
+    }
+    else
+    {
         snprintf(out_buffer, buffer_size, "%llu B", bytes);
     }
 }
@@ -38,9 +51,12 @@ unsigned long long get_disk_size(const char *disk_path)
 {
     // Extract device name if full path provided (e.g., "/dev/sda" -> "sda").
     const char *device = strrchr(disk_path, '/');
-    if (device == NULL) {
+    if (device == NULL)
+    {
         device = disk_path;
-    } else {
+    }
+    else
+    {
         device++;
     }
 
@@ -56,11 +72,13 @@ unsigned long long get_disk_size(const char *disk_path)
 
     // Open the file and read the number of sectors.
     FILE *file = fopen(path, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         return 0;
     }
     unsigned long long sectors = 0;
-    if (fscanf(file, "%llu", &sectors) != 1) {
+    if (fscanf(file, "%llu", &sectors) != 1)
+    {
         sectors = 0;
     }
     fclose(file);
@@ -83,11 +101,13 @@ int is_disk_removable(const char *device)
 
     // Open the file and read the removable flag.
     FILE *file = fopen(path, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         return 0;
     }
     int removable = 0;
-    if (fscanf(file, "%d", &removable) != 1) {
+    if (fscanf(file, "%d", &removable) != 1)
+    {
         removable = 0;
     }
     fclose(file);
@@ -98,25 +118,26 @@ int is_disk_removable(const char *device)
 unsigned long long sum_partition_sizes(const struct Partition *partitions, int count)
 {
     unsigned long long total = 0;
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
+    {
         total += partitions[i].size_bytes;
     }
     return total;
 }
 
 void get_partition_device(
-    const char *disk, int part_num, char *out_buffer, size_t buffer_size
+    const char *disk, int partition_number, char *out_buffer, size_t buffer_size
 )
 {
-    // NVMe and MMC devices use 'p' separator
+    // Use 'p' separator for NVMe and MMC devices
     // (e.g., `/dev/nvme0n1p1`, `/dev/mmcblk0p1`).
     if (strstr(disk, "nvme") || strstr(disk, "mmcblk"))
     {
-        snprintf(out_buffer, buffer_size, "%sp%d", disk, part_num);
+        snprintf(out_buffer, buffer_size, "%sp%d", disk, partition_number);
     }
     else
     {
-        // Standard devices append number directly (e.g., /dev/sda1).
-        snprintf(out_buffer, buffer_size, "%s%d", disk, part_num);
+        // Append number directly for standard devices (e.g., /dev/sda1).
+        snprintf(out_buffer, buffer_size, "%s%d", disk, partition_number);
     }
 }

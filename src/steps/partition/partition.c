@@ -1,3 +1,8 @@
+/**
+ * This code is responsible for running the partition management step of the
+ * installation wizard, allowing users to add, edit, and remove partitions.
+ */
+
 #include "../../all.h"
 
 #define PARTITION_STEP_NUM 3
@@ -19,7 +24,7 @@ int run_partition_step(WINDOW *modal)
     int action_selected = 0;
     int scroll_offset = 0;
 
-    // Main partition step loop.
+    // Run main partition step loop.
     while (1)
     {
         // Adjust scroll offset if partitions were removed.
@@ -125,7 +130,7 @@ int run_partition_step(WINDOW *modal)
                 break;
 
             case 27:
-                // User pressed Escape, go back to previous step.
+                // Return to previous step when user presses Escape.
                 return 0;
         }
     }

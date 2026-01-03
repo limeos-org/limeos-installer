@@ -1,45 +1,31 @@
 #pragma once
 #include "../all.h"
 
-/**
- * Maximum length for locale string storage.
- */
+/** Maximum length for locale string storage. */
 #define STORE_MAX_LOCALE_LEN 64
 
-/**
- * Maximum length for disk path storage.
- */
+/** Maximum length for disk path storage. */
 #define STORE_MAX_DISK_LEN 64
 
-/**
- * Maximum number of partitions.
- */
+/** Maximum number of partitions. */
 #define STORE_MAX_PARTITIONS 16
 
-/**
- * Maximum length for mount point path.
- */
+/** Maximum length for mount point path. */
 #define STORE_MAX_MOUNT_LEN 64
 
-/**
- * Filesystem types for partitions.
- */
+/** Filesystem types for partitions. */
 typedef enum {
     FS_EXT4,
     FS_SWAP
 } PartitionFS;
 
-/**
- * Partition types.
- */
+/** Partition types. */
 typedef enum {
     PART_PRIMARY,
     PART_LOGICAL
 } PartitionType;
 
-/**
- * Represents a single partition configuration.
- */
+/** Represents a single partition configuration. */
 typedef struct Partition {
     unsigned long long size_bytes;
     char mount_point[STORE_MAX_MOUNT_LEN];
@@ -49,9 +35,7 @@ typedef struct Partition {
     int flag_esp;
 } Partition;
 
-/**
- * Global store containing user selections and installation settings.
- */
+/** Global store containing user selections and installation settings. */
 typedef struct {
     int current_step;
     int dry_run;
@@ -68,7 +52,5 @@ typedef struct {
  */
 Store *get_store(void);
 
-/**
- * Resets the global store to default values.
- */
+/** Resets the global store to default values. */
 void reset_store(void);

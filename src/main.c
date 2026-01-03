@@ -21,6 +21,8 @@ static const char *commands[] = {
 
 int main(int argc, char *argv[])
 {
+    Store *store = get_store();
+
     // Ensure that the required libraries are available.
     const int library_count = sizeof(libraries) / sizeof(libraries[0]);
     for (int i = 0; i < library_count; i++)
@@ -43,8 +45,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    Store *store = get_store();
-
     // Parse command-line arguments.
     for (int i = 1; i < argc; i++)
     {
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     }
 
     // Initialize ncurses UI.
-    init_ui();
+    initialize_ui();
 
     // Create the centered modal window for wizard content.
     WINDOW *modal = create_modal("Installation Wizard");

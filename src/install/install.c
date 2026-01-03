@@ -4,7 +4,10 @@ int run_install(WINDOW *modal)
 {
     Store *store = get_store();
 
+    // Clear the modal window.
     clear_modal(modal);
+    
+    // Display installation start message.
     mvwprintw(modal, 2, 3, "Installing LimeOS...");
     wrefresh(modal);
 
@@ -15,7 +18,7 @@ int run_install(WINDOW *modal)
     {
         mvwprintw(modal, 4, 3, "Partitioning %s... FAILED", store->disk);
         wrefresh(modal);
-        return INSTALL_ERROR_DISK;
+        return -1;
     }
     mvwprintw(modal, 4, 3, "Partitioning %s... OK", store->disk);
     wrefresh(modal);
@@ -27,7 +30,7 @@ int run_install(WINDOW *modal)
     {
         mvwprintw(modal, 5, 3, "Extracting system files... FAILED");
         wrefresh(modal);
-        return INSTALL_ERROR_EXTRACT;
+        return -2;
     }
     mvwprintw(modal, 5, 3, "Extracting system files... OK");
     wrefresh(modal);
@@ -39,7 +42,7 @@ int run_install(WINDOW *modal)
     {
         mvwprintw(modal, 6, 3, "Installing bootloader... FAILED");
         wrefresh(modal);
-        return INSTALL_ERROR_BOOTLOADER;
+        return -3;
     }
     mvwprintw(modal, 6, 3, "Installing bootloader... OK");
     wrefresh(modal);
@@ -51,11 +54,13 @@ int run_install(WINDOW *modal)
     mvwprintw(modal, 7, 3, "Configuring locale... OK");
     wrefresh(modal);
 
+    // Cleanup: Close dry run log if applicable.
     close_dry_run_log();
 
+    // Final message.
     mvwprintw(modal, 9, 3, "Installation complete!");
     mvwprintw(modal, 10, 3, "Press Enter to exit...");
     wrefresh(modal);
 
-    return INSTALL_SUCCESS;
+    return 0;
 }

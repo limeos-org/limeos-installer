@@ -16,6 +16,7 @@ int populate_locale_options(StepOption *out_options, int max_count);
  *
  * @param modal The modal window to draw in.
  *
- * @return 1 if user confirmed selection, 0 if user went back.
+ * @return - `1` - Indicates user confirmed selection.
+ * @return - `0` - Indicates user went back.
  */
 int run_locale_step(WINDOW *modal);

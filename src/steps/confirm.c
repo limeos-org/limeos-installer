@@ -59,8 +59,10 @@ int run_confirmation_step(WINDOW *modal)
     {
         for (int j = i + 1; j < store->partition_count; j++)
         {
-            if (strcmp(store->partitions[i].mount_point,
-                       store->partitions[j].mount_point) == 0)
+            if (strcmp(
+                store->partitions[i].mount_point,
+                store->partitions[j].mount_point
+            ) == 0)
             {
                 has_duplicate = 1;
                 break;

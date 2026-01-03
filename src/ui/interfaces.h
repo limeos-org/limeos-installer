@@ -1,14 +1,10 @@
 #pragma once
 #include "../all.h"
 
-/**
- * Height of note/info/warning/error boxes in rows.
- */
+/** Height of note/info/warning/error boxes in rows. */
 #define NOTE_HEIGHT 2
 
-/**
- * Margin from modal edge for note boxes.
- */
+/** Margin from modal edge for note boxes. */
 #define NOTE_MARGIN 8
 
 /**
@@ -17,35 +13,27 @@
  */
 #define FORM_DESCRIPTION_SHIFT 4
 
-/**
- * Column alignment options.
- */
+/** Column alignment options. */
 typedef enum {
     TABLE_ALIGN_LEFT,
     TABLE_ALIGN_RIGHT,
     TABLE_ALIGN_CENTER
 } TableAlign;
 
-/**
- * Defines a single table column.
- */
+/** Defines a single table column. */
 typedef struct {
     const char *header;
     int width;
     TableAlign align;
 } TableColumn;
 
-/**
- * Represents a table row with cells.
- */
+/** Represents a table row with cells. */
 typedef struct {
     char cells[6][64];
     int cell_count;
 } TableRow;
 
-/**
- * Form field for spinner-type input.
- */
+/** Form field for spinner-type input. */
 typedef struct {
     const char *label;
     const char **options;
@@ -56,9 +44,7 @@ typedef struct {
     int warning;
 } FormField;
 
-/**
- * Result of form input handling.
- */
+/** Result of form input handling. */
 typedef enum {
     FORM_CONTINUE,
     FORM_SUBMIT,

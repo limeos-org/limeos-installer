@@ -38,7 +38,8 @@ void display_step(WINDOW *modal, int step_number, Step *step);
  *
  * @param modal The modal window to capture input from.
  *
- * @return 1 if user pressed Enter to proceed, 0 if user pressed 'q' to quit.
+ * @return - `1` - Indicates user pressed Enter to proceed.
+ * @return - `0` - Indicates user pressed 'q' to quit.
  */
 int await_step_input(WINDOW *modal);
 
@@ -53,9 +54,10 @@ int await_step_input(WINDOW *modal);
  * @param scroll_offset Index of the first visible option.
  * @param max_visible Maximum number of options to display at once.
  */
-void render_step_options(WINDOW *modal, StepOption *options, int count,
-                         int selected, int start_y, int scroll_offset,
-                         int max_visible);
+void render_step_options(
+    WINDOW *modal, StepOption *options, int count, int selected, int start_y,
+    int scroll_offset, int max_visible
+);
 
 /**
  * Runs an interactive selection step, returning the selected index.
@@ -69,8 +71,10 @@ void render_step_options(WINDOW *modal, StepOption *options, int count,
  * @param out_selected Pointer to store selected index, also used as initial.
  * @param allow_back Whether to allow the back option (Escape key).
  *
- * @return 1 if user confirmed selection, 0 if user went back.
+ * @return - `1` - Indicates user confirmed selection.
+ * @return - `0` - Indicates user went back.
  */
-int run_selection_step(WINDOW *modal, const char *title, int step_number,
-                       const char *description, StepOption *options, int count,
-                       int *out_selected, int allow_back);
+int run_selection_step(
+    WINDOW *modal, const char *title, int step_number, const char *description,
+    StepOption *options, int count, int *out_selected, int allow_back
+);

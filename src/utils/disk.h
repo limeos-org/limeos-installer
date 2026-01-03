@@ -1,7 +1,7 @@
 #pragma once
 #include "../all.h"
 
-// Forward declaration to avoid circular includes.
+/** Forward declaration to avoid circular includes. */
 struct Partition;
 
 /**
@@ -21,7 +21,8 @@ void format_disk_size(
  *
  * @param disk_path Device name or full path to the disk.
  *
- * @return Size in bytes, or 0 if unavailable.
+ * @return - `>0` - Size in bytes.
+ * @return - `0` - Size unavailable.
  */
 unsigned long long get_disk_size(const char *disk_path);
 
@@ -30,7 +31,8 @@ unsigned long long get_disk_size(const char *disk_path);
  *
  * @param device Device name (e.g., "sda").
  *
- * @return 1 if removable, 0 otherwise.
+ * @return - `1` - The device is removable.
+ * @return - `0` - The device is not removable.
  */
 int is_disk_removable(const char *device);
 
@@ -50,11 +52,11 @@ unsigned long long sum_partition_sizes(
  * Constructs a partition device path from a disk path and partition number.
  * Handles NVMe and MMC device naming conventions (e.g., /dev/nvme0n1p1).
  *
- * @param disk        The disk device path (e.g., "/dev/sda" or "/dev/nvme0n1").
- * @param part_num    The partition number (1-indexed).
- * @param out_buffer  Buffer to store the partition path.
- * @param buffer_size Size of the output buffer.
+ * @param disk             The disk device path (e.g., "/dev/sda" or "/dev/nvme0n1").
+ * @param partition_number The partition number (1-indexed).
+ * @param out_buffer       Buffer to store the partition path.
+ * @param buffer_size      Size of the output buffer.
  */
 void get_partition_device(
-    const char *disk, int part_num, char *out_buffer, size_t buffer_size
+    const char *disk, int partition_number, char *out_buffer, size_t buffer_size
 );

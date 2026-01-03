@@ -6,6 +6,7 @@
  *
  * @param modal The modal window to draw in.
  *
- * @return 1 if user confirmed installation, 0 if user went back.
+ * @return - `1` - Indicates user confirmed installation.
+ * @return - `0` - Indicates user went back.
  */
 int run_confirmation_step(WINDOW *modal);

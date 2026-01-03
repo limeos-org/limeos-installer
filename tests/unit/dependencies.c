@@ -5,9 +5,7 @@
 
 #include "../all.h"
 
-/**
- * Verifies is_library_available() returns 1 for an existing library.
- */
+/** Verifies is_library_available() returns 1 for an existing library. */
 static void test_is_library_available_returns_true_for_existing(void **state)
 {
     (void)state;
@@ -18,9 +16,7 @@ static void test_is_library_available_returns_true_for_existing(void **state)
     assert_int_equal(1, result);
 }
 
-/**
- * Verifies is_library_available() returns 0 for a non-existent library.
- */
+/** Verifies is_library_available() returns 0 for a non-existent library. */
 static void test_is_library_available_returns_false_for_missing(void **state)
 {
     (void)state;
@@ -30,9 +26,7 @@ static void test_is_library_available_returns_false_for_missing(void **state)
     assert_int_equal(0, result);
 }
 
-/**
- * Verifies is_command_available() returns 1 for an existing command.
- */
+/** Verifies is_command_available() returns 1 for an existing command. */
 static void test_is_command_available_returns_true_for_existing(void **state)
 {
     (void)state;
@@ -43,9 +37,7 @@ static void test_is_command_available_returns_true_for_existing(void **state)
     assert_int_equal(1, result);
 }
 
-/**
- * Verifies is_command_available() returns 0 for a non-existent command.
- */
+/** Verifies is_command_available() returns 0 for a non-existent command. */
 static void test_is_command_available_returns_false_for_missing(void **state)
 {
     (void)state;
@@ -55,9 +47,7 @@ static void test_is_command_available_returns_false_for_missing(void **state)
     assert_int_equal(0, result);
 }
 
-/**
- * Verifies is_command_available() returns 1 for 'sh' (POSIX shell).
- */
+/** Verifies is_command_available() returns 1 for 'sh' (POSIX shell). */
 static void test_is_command_available_finds_sh(void **state)
 {
     (void)state;
