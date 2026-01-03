@@ -541,6 +541,10 @@ This subsection defines naming conventions for functions.
    _**Why?**_ Module prefixes prevent name collisions and make the function's
    origin clear without checking includes.
 
+   _**Exception:**_ Static functions **may** omit the module prefix since they
+   are not exposed externally, though including it is still preferred for
+   consistency.
+
 #### Naming variables
 
 This subsection defines naming conventions for variables.
@@ -611,6 +615,10 @@ This subsection defines naming conventions for types (structs, enums, typedefs).
 
    _**Why?**_ Module prefixes prevent name collisions across the codebase.
 
+   _**Exception:**_ Private types **may** omit the module prefix since they are
+   not exposed externally, though including it is still preferred for
+   consistency.
+
 #### Naming macros
 
 This subsection defines naming conventions for preprocessor macros.
@@ -635,6 +643,10 @@ This subsection defines naming conventions for preprocessor macros.
 
    _**Why?**_ Module prefixes prevent name collisions and group related
    constants visually.
+
+   _**Exception:**_ Private macros **may** omit the module prefix since they are
+   not exposed externally, though including it is still preferred for
+   consistency.
 
 #### Naming files
 
@@ -908,26 +920,33 @@ Where:
    _**Why?**_ The rule states the contract; the why preserves intent so future
    edits don't regress.
 
-2. "Why" paragraphs **should** explain the causal link between the rule and its
+2. Rules **may** include an _**Exception:**_ paragraph after the _**Why?**_
+   paragraph when legitimate cases exist that should not follow the rule.
+
+   _**Why?**_ Exceptions prevent rules from being overly rigid; placing them
+   after the rationale keeps the rule's intent clear while acknowledging
+   edge cases.
+
+3. "Why" paragraphs **should** explain the causal link between the rule and its
    benefit, not just the benefit alone.
 
    _**Why?**_ "Consistent naming makes searches faster" explains causation;
    "improves code quality" just names a vague outcome without showing how the
    rule achieves it.
 
-3. Rules **must** use consistent modality: **must**, **must not**, **should**,
+4. Rules **must** use consistent modality: **must**, **must not**, **should**,
    **may**.
 
    _**Why?**_ Standard wording makes requirement strength explicit to readers,
    reviewers, and AI.
 
-4. The `extends`/`overrides` note **must** be included when the subsection
+5. The `extends`/`overrides` note **must** be included when the subsection
    modifies or builds upon another.
 
    _**Why?**_ Without the note, readers won't know rules conflict or stack;
    explicit precedence prevents misapplication.
 
-5. Convention subsections **must** include **Template**, **Example**, and
+6. Convention subsections **must** include **Template**, **Example**, and
    **Rules** sections.
 
    _**Why?**_ Templates provide structure, examples demonstrate usage, and
