@@ -5,19 +5,21 @@
 
 #include "../../all.h"
 
-#define SIZE_COUNT 22
-#define MOUNT_COUNT 5
-#define FLAG_COUNT 3
+#define SIZE_COUNT 20
+#define MOUNT_COUNT 6
+#define FLAG_COUNT 4
 #define TYPE_COUNT 2
 #define FIELD_SIZE   0
 #define FIELD_MOUNT  1
 #define FIELD_TYPE   2
 #define FIELD_FLAGS  3
 #define FIELD_COUNT  4
-#define DEFAULT_SIZE_INDEX 11
+#define DEFAULT_SIZE_INDEX 12
+#define MIN_PARTITION_SIZE (1ULL * 1000000)
 
 static const unsigned long long size_presets[] =
 {
+    8ULL * 1000000,          // 8M
     64ULL * 1000000,         // 64M
     128ULL * 1000000,        // 128M
     256ULL * 1000000,        // 256M
@@ -37,20 +39,17 @@ static const unsigned long long size_presets[] =
     4000ULL * 1000000000,    // 4T
     6000ULL * 1000000000,    // 6T
     8000ULL * 1000000000,    // 8T
-    16000ULL * 1000000000,   // 16T
-    32000ULL * 1000000000,   // 32T
-    64000ULL * 1000000000,   // 64T
 };
 
 static const char *size_labels[] =
 {
-    "64MB", "128MB", "256MB", "512MB", "1GB", "2GB", "4GB", "8GB",
+    "8MB", "64MB", "128MB", "256MB", "512MB", "1GB", "2GB", "4GB", "8GB",
     "16GB", "32GB", "64GB", "128GB", "256GB", "512GB",
-    "1TB", "2TB", "4TB", "6TB", "8TB", "16TB", "32TB", "64TB"
+    "1TB", "2TB", "4TB", "6TB", "8TB"
 };
 
-static const char *mount_options[] = { "/", "/boot", "/home", "/var", "swap" };
-static const char *flag_options[] = { "none", "boot", "esp" };
+static const char *mount_options[] = { "/", "/boot", "/home", "/var", "swap", "none" };
+static const char *flag_options[] = { "none", "boot", "esp", "bios_grub" };
 static const char *type_options[] = { "primary", "logical" };
 
 static int find_closest_size_idx(unsigned long long size)
@@ -88,6 +87,12 @@ static int find_mount_idx(const char *mount)
         return 4;
     }
 
+    // Handle unmounted partition.
+    if (strcmp(mount, "[none]") == 0)
+    {
+        return 5;
+    }
+
     // Search for matching mount point in options.
     for (int i = 0; i < MOUNT_COUNT; i++)
     {
@@ -101,11 +106,12 @@ static int find_mount_idx(const char *mount)
     return 0;
 }
 
-static int find_flag_idx(int boot, int esp)
+static int find_flag_idx(int boot, int esp, int bios_grub)
 {
     // Return index based on which flag is set.
     if (boot) return 1;
     if (esp) return 2;
+    if (bios_grub) return 3;
     return 0;
 }
 
@@ -143,7 +149,7 @@ static int run_partition_form(
               "Use logical partitions inside extended partitions.", 0 },
             { "Flags",      flag_options,  FLAG_COUNT,  *flag_idx,  0,
               "Special flags for bootloader configuration.\n"
-              "'esp' for UEFI boot, 'boot' for legacy BIOS.", 0 }
+              "'esp' for UEFI, 'bios_grub' for BIOS+GPT.", 0 }
         };
 
         // Clear modal and render dialog title.
@@ -257,6 +263,19 @@ int add_partition_dialog(
     // Check if maximum partition count has been reached.
     if (store->partition_count >= STORE_MAX_PARTITIONS)
     {
+        // Display error message to inform user of partition limit.
+        clear_modal(modal);
+        wattron(modal, A_BOLD);
+        mvwprintw(modal, 2, 3, "Add Partition");
+        wattroff(modal, A_BOLD);
+        render_error(modal, 5, 3, "Maximum partition limit reached.\n"
+            "Remove a partition before adding a new one.");
+        const char *footer[] = { "[Enter] OK", NULL };
+        render_footer(modal, footer);
+        wrefresh(modal);
+
+        // Wait for user to acknowledge the error.
+        while (wgetch(modal) != '\n');
         return 0;
     }
 
@@ -264,6 +283,26 @@ int add_partition_dialog(
     unsigned long long free_space = disk_size - sum_partition_sizes(
         store->partitions, store->partition_count
     );
+
+    // Check if free space is below minimum partition size.
+    if (free_space < MIN_PARTITION_SIZE)
+    {
+        // Display error message to inform user of insufficient space.
+        clear_modal(modal);
+        wattron(modal, A_BOLD);
+        mvwprintw(modal, 2, 3, "Add Partition");
+        wattroff(modal, A_BOLD);
+        render_error(modal, 5, 3, "Insufficient free space on disk.\n"
+            "Remove or resize a partition to continue.");
+        const char *footer[] = { "[Enter] OK", NULL };
+        render_footer(modal, footer);
+        wrefresh(modal);
+
+        // Wait for user to acknowledge the error.
+        while (wgetch(modal) != '\n');
+        return 0;
+    }
+
     char free_str[32];
     format_disk_size(free_space, free_str, sizeof(free_str));
 
@@ -282,12 +321,16 @@ int add_partition_dialog(
         return 0;
     }
 
-    // Create new partition, setting size and clamping to free space.
+    // Create new partition, clamping size to free space and minimum.
     Partition new_partition = {0};
     new_partition.size_bytes = size_presets[size_idx];
     if (new_partition.size_bytes > free_space)
     {
         new_partition.size_bytes = free_space;
+    }
+    if (new_partition.size_bytes < MIN_PARTITION_SIZE)
+    {
+        new_partition.size_bytes = MIN_PARTITION_SIZE;
     }
 
     // Set mount point and filesystem based on selection.
@@ -299,6 +342,15 @@ int add_partition_dialog(
             "[swap]"
         );
         new_partition.filesystem = FS_SWAP;
+    }
+    else if (mount_idx == 5)
+    {
+        snprintf(
+            new_partition.mount_point,
+            sizeof(new_partition.mount_point),
+            "[none]"
+        );
+        new_partition.filesystem = FS_NONE;
     }
     else
     {
@@ -313,6 +365,13 @@ int add_partition_dialog(
     new_partition.type = (type_idx == 0) ? PART_PRIMARY : PART_LOGICAL;
     new_partition.flag_boot = (flag_idx == 1);
     new_partition.flag_esp = (flag_idx == 2);
+    new_partition.flag_bios_grub = (flag_idx == 3);
+
+    // ESP partitions must be FAT32.
+    if (new_partition.flag_esp)
+    {
+        new_partition.filesystem = FS_FAT32;
+    }
 
     // Add partition to store and return success.
     store->partitions[store->partition_count++] = new_partition;
@@ -353,7 +412,7 @@ int edit_partition_dialog(
     int size_idx = find_closest_size_idx(p->size_bytes);
     int mount_idx = find_mount_idx(p->mount_point);
     int type_idx = (p->type == PART_PRIMARY) ? 0 : 1;
-    int flag_idx = find_flag_idx(p->flag_boot, p->flag_esp);
+    int flag_idx = find_flag_idx(p->flag_boot, p->flag_esp, p->flag_bios_grub);
 
     // Build title with partition number.
     char title[32];
@@ -368,11 +427,15 @@ int edit_partition_dialog(
         return 0;
     }
 
-    // Update partition size, clamping to available free space.
+    // Update partition size, clamping to free space and minimum.
     p->size_bytes = size_presets[size_idx];
     if (p->size_bytes > free_space)
     {
         p->size_bytes = free_space;
+    }
+    if (p->size_bytes < MIN_PARTITION_SIZE)
+    {
+        p->size_bytes = MIN_PARTITION_SIZE;
     }
 
     // Update mount point and filesystem.
@@ -380,6 +443,11 @@ int edit_partition_dialog(
     {
         snprintf(p->mount_point, sizeof(p->mount_point), "[swap]");
         p->filesystem = FS_SWAP;
+    }
+    else if (mount_idx == 5)
+    {
+        snprintf(p->mount_point, sizeof(p->mount_point), "[none]");
+        p->filesystem = FS_NONE;
     }
     else
     {
@@ -395,6 +463,14 @@ int edit_partition_dialog(
     p->type = (type_idx == 0) ? PART_PRIMARY : PART_LOGICAL;
     p->flag_boot = (flag_idx == 1);
     p->flag_esp = (flag_idx == 2);
+    p->flag_bios_grub = (flag_idx == 3);
+
+    // ESP partitions must be FAT32.
+    if (p->flag_esp)
+    {
+        p->filesystem = FS_FAT32;
+    }
+
     return 1;
 }
 

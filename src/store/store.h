@@ -16,7 +16,9 @@
 /** Filesystem types for partitions. */
 typedef enum {
     FS_EXT4,
-    FS_SWAP
+    FS_SWAP,
+    FS_FAT32,
+    FS_NONE
 } PartitionFS;
 
 /** Partition types. */
@@ -33,6 +35,7 @@ typedef struct Partition {
     PartitionType type;
     int flag_boot;
     int flag_esp;
+    int flag_bios_grub;
 } Partition;
 
 /** Global store containing user selections and installation settings. */

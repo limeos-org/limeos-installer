@@ -11,12 +11,20 @@ static const char *libraries[] = {
 };
 
 static const char *commands[] = {
+    // Partitioning.
     "parted",
     "mkfs.ext4",
+    "mkfs.vfat",
     "mkswap",
     "mount",
+    "umount",
     "swapon",
-    "tar"
+    "swapoff",
+    "mkdir",
+    // Rootfs extraction.
+    "tar",
+    // Locale configuration.
+    "sed"
 };
 
 int main(int argc, char *argv[])
@@ -90,7 +98,7 @@ int main(int argc, char *argv[])
     }
 
     // Run installation using settings from global state.
-    int result = run_install(modal);
+    int result = run_install(ncurses_install_progress, modal);
 
     // Wait for final input before exiting.
     await_step_input(modal);

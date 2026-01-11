@@ -11,6 +11,8 @@ const char *fs_to_string(PartitionFS fs)
     {
         case FS_EXT4: return "ext4";
         case FS_SWAP: return "swap";
+        case FS_FAT32: return "fat32";
+        case FS_NONE: return "-";
         default: return "?";
     }
 }
@@ -89,9 +91,10 @@ void render_partition_table(
             format_disk_size(p->size_bytes, size_str, sizeof(size_str));
 
             // Build flags string from partition flags.
-            char flags[16] = "";
+            char flags[24] = "";
             if (p->flag_boot) strcat(flags, "boot ");
-            if (p->flag_esp) strcat(flags, "esp");
+            if (p->flag_esp) strcat(flags, "esp ");
+            if (p->flag_bios_grub) strcat(flags, "bios_grub");
 
             // Use "[swap]" label for swap partitions.
             const char *mount = (p->filesystem == FS_SWAP)

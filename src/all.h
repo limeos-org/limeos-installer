@@ -15,14 +15,17 @@
 #include <ctype.h>
 #include <dlfcn.h>
 #include <sys/mount.h>
+#include <ctype.h>
 
 #include "store/store.h"
 #include "utils/command.h"
 #include "utils/disk.h"
 #include "utils/dependencies.h"
+#include "install/progress.h"
 #include "ui/ui.h"
 #include "ui/modal.h"
 #include "ui/interfaces.h"
+#include "ui/install.h"
 #include "steps/steps.h"
 #include "steps/locale.h"
 #include "steps/disk.h"
@@ -35,3 +38,4 @@
 #include "install/rootfs.h"
 #include "install/bootloader.h"
 #include "install/locale.h"
+#include "install/cleanup.h"
